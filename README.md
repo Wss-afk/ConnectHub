@@ -1,123 +1,105 @@
-# Chatroom Application (TFG)
+# ConnectHub
 
-A comprehensive real-time chat application built with a modern tech stack, featuring direct messaging, group chats, admin controls, and persistent read status tracking.
+A full-stack real-time chat platform built with Spring Boot, Vue.js, WebSocket, and MySQL.
 
-## 🚀 Features
+## Live Demo
 
-### Core Chat Functionality
-- **Real-time Messaging**: Powered by WebSocket (STOMP) for instant communication.
-- **Direct & Group Chats**: Create groups, invite members, or chat one-on-one.
-- **Read Status & Unread Counts**: 
-  - Tracks the last read message for each user in every group.
-  - Displays accurate unread message counters in the sidebar.
-- **User Status**: Real-time Online/Offline status indicators.
+🔗 Demo: https://connecthub-uvyk.onrender.com
 
-### Admin & Management
-- **Admin Dashboard**: Specialized interface for administrators.
-- **User Management**: View, update, or ban users.
-- **Group Management**: Monitor and manage chat groups.
-- **Audit Logs**: Track important system events and user actions.
+## Features
 
-### Technical Highlights
-- **Responsive UI**: Built with Vue 3 and Bootstrap for mobile and desktop support.
-- **Secure Authentication**: Spring Security integration.
-- **Data Persistence**: MySQL with Spring Data JPA.
-- **File Uploads**: Support for avatar and image sharing.
+### Real-Time Communication
 
-## 🛠 Tech Stack
+* Real-time messaging using WebSocket (STOMP)
+* Direct messaging between users
+* Group chat support
+* Online/offline user status
+* Unread message tracking
+
+### User Management
+
+* User registration and authentication
+* User profile management
+* Avatar upload support
+* Role-based permissions
+
+### Administration
+
+* Admin dashboard
+* User moderation
+* Group management
+* Activity monitoring
+
+### Additional Features
+
+* File and image uploads
+* Responsive design
+* Read receipts and unread counters
+* Persistent chat history
+
+## Tech Stack
 
 ### Backend
-- **Framework**: Spring Boot 3.2.5
-- **Language**: Java 21
-- **Database**: MySQL 8.0
-- **ORM**: Spring Data JPA
-- **WebSocket**: Spring WebSocket (STOMP)
-- **Security**: Spring Security
+
+* Java 21
+* Spring Boot 3
+* Spring Security
+* Spring Data JPA
+* WebSocket (STOMP)
+* MySQL / H2
 
 ### Frontend
-- **Framework**: Vue.js 3
-- **State Management**: Vuex
-- **Routing**: Vue Router
-- **HTTP Client**: Axios
-- **WebSocket Client**: `webstomp-client` / `sockjs-client`
-- **Styling**: Bootstrap 5
 
-## ⚙️ Prerequisites
+* Vue.js 3
+* Vuex
+* Vue Router
+* Axios
+* Bootstrap 5
+* SockJS
+* WebStomp
 
-Ensure you have the following installed:
-- **Java Development Kit (JDK) 21**
-- **Node.js** (v16+ recommended) & **npm**
-- **MySQL Server**
+## Architecture
 
-## 📦 Installation & Setup
+Frontend (Vue.js)
+↓
+REST API + WebSocket
+↓
+Spring Boot
+↓
+JPA/Hibernate
+↓
+MySQL / H2 Database
 
-### 1. Database Setup
-Create a MySQL database named `chatroom`.
-*Note: The default configuration expects MySQL on port `3308` with username `root` and password `12345678`. You can change this in `chatroom_backend/src/main/resources/application.yml`.*
+## Screenshots
 
-```sql
-CREATE DATABASE chatroom;
-```
+(Add screenshots here)
 
-### 2. Backend Setup
-Navigate to the backend directory and run the Spring Boot application.
+## Local Development
+
+### Backend
 
 ```bash
 cd chatroom_backend
 mvn spring-boot:run
 ```
-The server will start on `http://localhost:8080`.
 
-### 3. Frontend Setup
-Navigate to the frontend directory, install dependencies, and start the development server.
+### Frontend
 
 ```bash
 cd chatroom_frontend
 npm install
 npm run serve
 ```
-The application will be accessible at `http://localhost:8081` (or the port specified in your terminal).
 
-## 🧩 Architecture Insights
+## Future Improvements
 
-### Read Status Tracking
-The application uses a specific entity `GroupReadStatus` to efficiently track unread messages without scanning the entire message history.
-- **Location**: `com.chatroom.entity.GroupReadStatus`
-- **Logic**: Stores the `lastReadMessageId` for a unique pair of `userId` and `groupId`.
-- **Controller**: `ChatController` handles endpoints like `/unread-count` and `/group/mark-read` to update this status in real-time.
+* Message reactions
+* Push notifications
+* End-to-end encryption
+* Voice and video chat
 
-### WebSocket Events
-- **Backend**: `WebSocketEventListener` tracks session connects/disconnects to manage online user lists.
-- **Frontend**: Subscribes to topics like `/topic/public` (global events) and `/user/queue/messages` (private updates).
+## Author
 
-## 📂 Project Structure
-TFG21/
-├── chatroom_backend/     # Spring Boot Server
-│   ├── src/main/java/    # Controllers, Services, Entities
-│   └── src/main/resources/ # Config (application.yml)
-├── chatroom_frontend/    # Vue.js Client
-│   ├── src/views/        # UI Pages (Chat, Admin, Login)
-│   ├── src/store/        # Vuex State Management
-│   └── src/services/     # API & WebSocket Services
-└── README.md             # This file
+Shanshui Wang
 
-
-Every time you update the project, run these 4 commands in order:
-# 1. Build frontend
-cd c:\Users\wang1\Desktop\TFG\TFG21\TFG\chatroom_frontend
-npm run build
-
-# 2. Copy dist to static
-xcopy /E /I chatroom_frontend\dist\* chatroom_backend\src\main\resources\static\
-
-# 3. Build JAR
-cd ..\chatroom_backend
-mvn clean package -DskipTests
-
-# 4. Run it
-java -jar target\chatroom-backend-1.0.0.jar
-
-## Usuario de Administrador 
-superadmin
-admin123
-
+Final Degree Project (TFG)
