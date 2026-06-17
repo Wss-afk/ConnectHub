@@ -2,11 +2,6 @@
 
 A full-stack real-time chat platform built with Spring Boot, Vue.js, WebSocket, and MySQL.
 
-<<<<<<< HEAD
-## Live Demo
-
-🔗 Demo: https://connecthub-uvyk.onrender.com
-=======
 **Live Demo**: [https://connecthub-uvyk.onrender.com/](https://connecthub-uvyk.onrender.com/)
 
 ## 🚀 Features
@@ -20,62 +15,23 @@ A full-stack real-time chat platform built with Spring Boot, Vue.js, WebSocket, 
 - **User Status**: Real-time Online/Offline status indicators.
 - **File & Image Sharing**: Upload avatars, share images and files in conversations.
 - **Event Management**: Create and manage events within the application.
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
-## Features
+### Admin & Management
+- **Admin Dashboard**: Specialized interface for administrators.
+- **User Management**: View, update, or ban users.
+- **Group Management**: Monitor and manage chat groups.
+- **Audit Logs**: Track important system events and user actions.
 
-<<<<<<< HEAD
-### Real-Time Communication
-=======
 ### Technical Highlights
 - **Responsive UI**: Built with Vue 3 and Bootstrap 5 for mobile and desktop support.
 - **Secure Authentication**: Spring Security integration with role-based access control.
 - **Flexible Database**: H2 in-memory database by default (zero-config), with MySQL support for production.
 - **Docker Deployment**: Multi-stage Docker build optimized for cloud hosting.
 - **SPA Architecture**: Frontend served directly by Spring Boot as a Single Page Application.
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
-* Real-time messaging using WebSocket (STOMP)
-* Direct messaging between users
-* Group chat support
-* Online/offline user status
-* Unread message tracking
-
-### User Management
-
-* User registration and authentication
-* User profile management
-* Avatar upload support
-* Role-based permissions
-
-### Administration
-
-* Admin dashboard
-* User moderation
-* Group management
-* Activity monitoring
-
-### Additional Features
-
-* File and image uploads
-* Responsive design
-* Read receipts and unread counters
-* Persistent chat history
-
-## Tech Stack
+## 🛠 Tech Stack
 
 ### Backend
-<<<<<<< HEAD
-
-* Java 21
-* Spring Boot 3
-* Spring Security
-* Spring Data JPA
-* WebSocket (STOMP)
-* MySQL / H2
-
-### Frontend
-=======
 - **Framework**: Spring Boot 3.2.5
 - **Language**: Java 21
 - **Database**: H2 (default) / MySQL 8.0 (production)
@@ -91,19 +47,9 @@ A full-stack real-time chat platform built with Spring Boot, Vue.js, WebSocket, 
 - **WebSocket Client**: `webstomp-client` / `sockjs-client`
 - **Styling**: Bootstrap 5
 - **Progress Indicator**: NProgress
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
-* Vue.js 3
-* Vuex
-* Vue Router
-* Axios
-* Bootstrap 5
-* SockJS
-* WebStomp
+## ⚙️ Prerequisites
 
-<<<<<<< HEAD
-## Architecture
-=======
 Ensure you have the following installed:
 - **Java Development Kit (JDK) 21**
 - **Node.js** (v16+) & **npm**
@@ -112,40 +58,17 @@ Ensure you have the following installed:
 *Optional:*
 - **MySQL Server** (if using MySQL instead of H2)
 - **Docker** (for containerized deployment)
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
-Frontend (Vue.js)
-↓
-REST API + WebSocket
-↓
-Spring Boot
-↓
-JPA/Hibernate
-↓
-MySQL / H2 Database
+## 📦 Installation & Setup
 
-<<<<<<< HEAD
-## Screenshots
-
-(Add screenshots here)
-
-## Local Development
-
-### Backend
-=======
 ### 1. Clone the Repository
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
 ```bash
 git clone <repository-url>
 cd TFG21
 ```
 
-<<<<<<< HEAD
-### Frontend
-=======
 ### 2. Frontend Build
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
 ```bash
 cd chatroom_frontend
@@ -196,8 +119,6 @@ For frontend development with hot reload:
 cd chatroom_frontend
 npm run serve
 ```
-<<<<<<< HEAD
-=======
 
 The dev server will be accessible at `http://localhost:8081`.
 
@@ -218,22 +139,9 @@ docker run -p 8080:8080 \
   -e DB_DRIVER=com.mysql.cj.jdbc.Driver \
   connecthub
 ```
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
 
-## Future Improvements
+## 🧩 Architecture Insights
 
-<<<<<<< HEAD
-* Message reactions
-* Push notifications
-* End-to-end encryption
-* Voice and video chat
-
-## Author
-
-Shanshui Wang
-
-Final Degree Project (TFG)
-=======
 ### Read Status Tracking
 The application uses a dedicated `GroupReadStatus` entity to efficiently track unread messages without scanning the entire message history.
 - **Entity**: `com.chatroom.entity.GroupReadStatus`
@@ -276,9 +184,19 @@ TFG21/
 └── README.md
 ```
 
+## 🗺️ Future Improvements
+
+- Message reactions
+- Push notifications
+- End-to-end encryption
+- Voice and video chat
+
 ## 👤 Default Admin Account
 
 | Username | Password |
 |---|---|
 | `superadmin` | `admin123` |
->>>>>>> 16397f9 (docs(readme): 重构并扩展项目文档内容)
+
+## 👨‍💻 Author
+
+**Shanshui Wang** — Final Degree Project (TFG)
