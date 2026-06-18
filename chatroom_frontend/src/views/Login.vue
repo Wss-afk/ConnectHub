@@ -136,7 +136,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 50%, #f0f9ff 100%);
   padding: 24px;
   position: relative;
   overflow: hidden;
@@ -146,7 +146,7 @@ export default {
   position: absolute;
   border-radius: 50%;
   filter: blur(80px);
-  opacity: 0.45;
+  opacity: 0.25;
   pointer-events: none;
   animation: blobFloat 8s ease-in-out infinite alternate;
 }
@@ -165,7 +165,7 @@ export default {
 }
 .bg-blob--3 {
   width: 260px; height: 260px;
-  background: #8b5cf6;
+  background: #a78bfa;
   top: 50%; left: 60%;
   animation-duration: 9s;
   animation-delay: -5s;
@@ -180,12 +180,12 @@ export default {
 .login-card {
   width: 100%;
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.07);
+  background: #ffffff;
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid #e2e8f0;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 4px 16px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   animation: cardIn 500ms cubic-bezier(0.22, 1, 0.36, 1);
   position: relative;
@@ -208,7 +208,7 @@ export default {
   font-size: 2rem;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #818cf8, #38bdf8, #a78bfa);
+  background: linear-gradient(135deg, #4f46e5, #06b6d4, #7c3aed);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -225,7 +225,7 @@ export default {
 
 .login-subtitle {
   margin: 0;
-  color: rgba(255, 255, 255, 0.5);
+  color: #64748b;
   font-size: 0.9rem;
   font-weight: 400;
   letter-spacing: 0.2px;
@@ -246,7 +246,7 @@ export default {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  color: rgba(255, 255, 255, 0.4);
+  color: #94a3b8;
   display: flex;
   pointer-events: none;
   transition: color 0.2s;
@@ -257,21 +257,21 @@ export default {
   width: 100%;
   padding: 13px 44px 13px 44px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #1e293b;
   font-size: 0.95rem;
   transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
   box-sizing: border-box;
 }
 .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
+  color: #94a3b8;
 }
 .input-group input:focus {
   outline: none;
   border-color: var(--brand-gradient-start);
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 .input-group:focus-within .input-icon {
   color: var(--brand-gradient-start);
@@ -284,14 +284,14 @@ export default {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.35);
+  color: #94a3b8;
   cursor: pointer;
   display: flex;
   padding: 2px;
   transition: color 0.2s;
 }
 .toggle-pw:hover {
-  color: rgba(255, 255, 255, 0.7);
+  color: #64748b;
 }
 
 /* ── Error ── */
@@ -299,9 +299,9 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(220, 38, 38, 0.15);
-  border: 1px solid rgba(220, 38, 38, 0.3);
-  color: #fca5a5;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
   padding: 10px 14px;
   border-radius: 10px;
   font-size: 0.85rem;
@@ -339,7 +339,7 @@ export default {
   min-height: 48px;
 }
 .btn-login:hover:not(:disabled) {
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.45);
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
   transform: translateY(-1px);
 }
 .btn-login:active:not(:disabled) {
@@ -365,7 +365,7 @@ export default {
 .login-footer {
   text-align: center;
   padding: 14px 28px 20px;
-  color: rgba(255, 255, 255, 0.3);
+  color: #94a3b8;
   font-size: 0.78rem;
 }
 </style>
