@@ -6,15 +6,11 @@
     <div class="bg-blob bg-blob--3"></div>
 
     <div class="login-card">
-      <!-- Logo & Header -->
+      <!-- Header -->
       <div class="login-header">
-        <div class="logo-circle">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="36" height="36">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-          </svg>
-        </div>
         <h2 class="app-title">ConnectHub</h2>
-        <p class="login-subtitle">Accede para continuar al chat</p>
+        <div class="title-divider"></div>
+        <p class="login-subtitle">Inicia sesión para continuar</p>
       </div>
 
       <!-- Form -->
@@ -204,33 +200,35 @@ export default {
 /* ── Header ── */
 .login-header {
   text-align: center;
-  padding: 36px 28px 20px;
-}
-
-.logo-circle {
-  width: 68px; height: 68px;
-  margin: 0 auto 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
-  color: #fff;
-  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+  padding: 40px 28px 24px;
 }
 
 .app-title {
   margin: 0;
-  font-size: 1.6rem;
+  font-size: 2rem;
   font-weight: 800;
-  color: #fff;
   letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #818cf8, #38bdf8, #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.title-divider {
+  width: 48px;
+  height: 3px;
+  margin: 14px auto;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  opacity: 0.7;
 }
 
 .login-subtitle {
-  margin-top: 6px;
-  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
   font-size: 0.9rem;
+  font-weight: 400;
+  letter-spacing: 0.2px;
 }
 
 /* ── Form ── */
