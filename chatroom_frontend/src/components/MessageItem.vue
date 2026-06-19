@@ -151,29 +151,30 @@ export default {
 }
 
 .avatar {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background: #e2e8f0;
-  color: #1f2937;
+  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+  color: #4f46e5;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
-  box-shadow: var(--shadow-1);
+  box-shadow: 0 2px 8px rgba(79,70,229,0.12);
   flex-shrink: 0;
   overflow: hidden;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
 .avatar:hover {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .avatar.mine {
-  background: linear-gradient(135deg, var(--color-secondary), #2563eb);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   color: #fff;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.25);
 }
 
 .avatar-img {
@@ -184,34 +185,44 @@ export default {
 
 .message-item {
   position: relative;
-  padding: 8px 12px;
+  padding: 10px 14px;
   border-radius: 18px;
   max-width: min(75%, 600px);
   display: flex;
   flex-direction: column;
   word-wrap: break-word;
-  animation: messageSlideIn 0.2s ease-out;
-  box-shadow: var(--shadow-1);
+  animation: messageSlideIn 0.25s ease-out;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   transition: all 0.2s ease;
   border: 1px solid transparent;
 }
 
+.message-item:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
 @keyframes messageSlideIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .message-item.mine {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
-  color: var(--color-primary-contrast);
+  background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
+  color: #fff;
   border-bottom-right-radius: 4px;
   margin-right: 4px;
+  box-shadow: 0 2px 12px rgba(79,70,229,0.2);
+}
+
+.message-item.mine:hover {
+  box-shadow: 0 4px 18px rgba(79,70,229,0.3);
 }
 
 .message-item:not(.mine) {
   background: var(--color-surface);
   color: var(--text-primary);
-  border-color: var(--border-color);
+  border-color: rgba(226,232,240,0.8);
   border-bottom-left-radius: 4px;
   margin-left: 4px;
 }
@@ -219,35 +230,41 @@ export default {
 .sender {
   font-size: 11px;
   font-weight: 700;
-  margin-bottom: 2px;
-  color: var(--color-primary);
-  opacity: 0.9;
+  margin-bottom: 3px;
+  color: var(--brand-gradient-start);
+  opacity: 0.85;
   margin-left: 2px;
+  letter-spacing: 0.2px;
 }
 .message-item.mine .sender { display: none; }
 
 .content {
-  line-height: 1.5;
+  line-height: 1.55;
   font-size: var(--font-size-md);
   position: relative;
   z-index: 1;
 }
 
-/* Ajustes de timestamp para que fluya mejor */
+/* Timestamp */
 .timestamp {
   align-self: flex-end;
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 10px;
-  margin-top: 2px;
-  opacity: 0.7;
+  margin-top: 4px;
+  opacity: 0.65;
   user-select: none;
   line-height: 1;
+  transition: opacity 0.2s;
+}
+
+.message-item:hover .timestamp {
+  opacity: 0.85;
 }
 
 .message-item.mine .timestamp {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .message-item:not(.mine) .timestamp {
@@ -266,26 +283,35 @@ export default {
   display: block;
   cursor: zoom-in;
   margin-bottom: 4px;
+  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.attachment-image:hover {
+  transform: scale(1.02);
 }
 
 .attachment-file {
-  background: rgba(0,0,0,0.05);
-  padding: 8px 12px;
-  border-radius: 8px;
+  background: rgba(0,0,0,0.04);
+  padding: 10px 14px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   text-decoration: none;
   color: inherit;
   font-weight: 500;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0,0,0,0.04);
 }
 .message-item.mine .attachment-file {
   background: rgba(255,255,255,0.15);
   color: #fff;
+  border-color: rgba(255,255,255,0.1);
 }
 .attachment-file:hover {
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.08);
+  transform: translateY(-1px);
 }
 .message-item.mine .attachment-file:hover {
   background: rgba(255,255,255,0.25);
@@ -293,24 +319,16 @@ export default {
 
 /* Continuation Logic */
 .message-row.continuation {
-  margin-top: -4px; /* Acercar mensajes continuos */
+  margin-top: -4px;
   margin-bottom: var(--space-2);
 }
 .message-row.continuation .avatar {
   visibility: hidden;
-  height: 0; /* Evitar hueco vertical si se ocultara solo visibility */
+  height: 0;
 }
 
-.message-row.continuation .message-item.mine {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-.message-row.continuation:last-child .message-item.mine {
-  border-bottom-right-radius: 4px; /* Mantener la cola en el último? */
-}
-/* Lógica simplificada para bordes en continuación */
 .message-row.continuation .message-item {
-  border-radius: 18px; /* Reset */
+  border-radius: 18px;
   margin-top: 2px;
 }
 .message-row.continuation .message-item.mine {
@@ -326,8 +344,9 @@ export default {
 .highlight {
   background: #fef08a;
   color: #000;
-  padding: 0 2px;
-  border-radius: 2px;
+  padding: 1px 3px;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(250,204,21,0.3);
 }
 
 /* Mobile */
@@ -342,7 +361,7 @@ export default {
     font-size: 12px;
   }
   .actions {
-    display: none !important; /* Ocultar acciones flotantes en móvil, usar long-press o menú en el futuro */
+    display: none !important;
   }
 }
 </style>

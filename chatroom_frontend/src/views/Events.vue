@@ -535,7 +535,7 @@ export default {
 </script>
 
 <style scoped>
-.events-page.light { display: flex; min-height: 100vh; background: #f8fafc; color: #1e293b; }
+.events-page.light { display: flex; min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #f0f4ff 50%, #f8fafc 100%); color: #1e293b; }
 .content { flex: 1; padding: 24px 32px; overflow-y: auto; }
 
 /* Transitions */
@@ -559,7 +559,7 @@ export default {
   padding: 10px 20px; border-radius: 12px; border: none;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: #fff; font-weight: 600; cursor: pointer;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
   transition: all 0.2s;
   display: flex; align-items: center; justify-content: center;
 }
@@ -570,14 +570,14 @@ export default {
 .calendar-column { display: flex; flex-direction: column; gap: 24px; }
 .calendar {
   background: #ffffff; border-radius: 24px; padding: 24px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px -5px rgba(79,70,229,0.06), 0 4px 6px rgba(0,0,0,0.02);
+  border: 1px solid rgba(79,70,229,0.04);
 }
 
 .month-agenda-section {
   background: #ffffff; border-radius: 24px; padding: 24px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9;
+  box-shadow: 0 10px 30px -5px rgba(79,70,229,0.06);
+  border: 1px solid rgba(79,70,229,0.04);
 }
 .section-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 20px; }
 
@@ -591,8 +591,8 @@ export default {
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 .agenda-item:hover {
-  transform: translateY(-2px); border-color: #cbd5e1;
-  box-shadow: 0 8px 16px -4px rgba(0,0,0,0.08);
+  transform: translateY(-2px); border-color: rgba(99,102,241,0.2);
+  box-shadow: 0 8px 20px -4px rgba(79,70,229,0.1);
 }
 
 .agenda-date {
@@ -627,18 +627,19 @@ export default {
 }
 .day:hover {
   border-color: #6366f1; transform: translateY(-4px);
-  box-shadow: 0 12px 24px -10px rgba(99, 102, 241, 0.15);
+  box-shadow: 0 12px 28px -10px rgba(99, 102, 241, 0.18);
   z-index: 10;
 }
 .day.today {
-  background: #f0fdfa; border-color: #14b8a6;
-  box-shadow: inset 0 0 0 1px #14b8a6;
+  background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(6,182,212,0.04));
+  border-color: #6366f1;
+  box-shadow: inset 0 0 0 1px #6366f1, 0 4px 12px rgba(99,102,241,0.08);
 }
 .day.today .num {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
   color: white; width: 28px; height: 28px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 6px rgba(20, 184, 166, 0.3);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.35);
 }
 .day.selected {
   border-color: #6366f1; background: #eef2ff;
@@ -668,8 +669,9 @@ export default {
 
 .sidebar {
   background: #ffffff; border-radius: 24px; padding: 24px;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05);
-  border: 1px solid #f1f5f9; display: flex; flex-direction: column;
+  box-shadow: 0 10px 30px -5px rgba(79,70,229,0.06);
+  border: 1px solid rgba(79,70,229,0.04);
+  display: flex; flex-direction: column;
 }
 .panel-header-row {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
@@ -693,8 +695,8 @@ export default {
 }
 .event-item:hover {
   transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e1;
+  box-shadow: 0 12px 24px -8px rgba(79,70,229,0.12);
+  border-color: rgba(99,102,241,0.2);
 }
 .event-left { display: none; } 
 .event-item::before {
@@ -717,12 +719,12 @@ export default {
 .empty-desc { font-size: 0.9rem; color: #94a3b8; margin: 0; max-width: 250px; line-height: 1.5; }
 .primary-sm {
   padding: 8px 16px; border-radius: 10px; border: none;
-  background: #6366f1; color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85rem;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85rem;
   display: flex; align-items: center; gap: 8px;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
 }
-.primary-sm:hover { background: #4f46e5; transform: translateY(-1px); }
+.primary-sm:hover { background: linear-gradient(135deg, #4f46e5, #7c3aed); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,0.35); }
 .btn-create-empty {
   padding: 8px 16px; border-radius: 10px; border: 1px solid #cbd5e1;
   background: #fff; color: #475569; font-weight: 600; cursor: pointer; font-size: 0.85rem;
@@ -747,14 +749,16 @@ export default {
 /* Detail Modal */
 .detail-modal {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center; z-index: 50;
   animation: fadeIn 0.2s ease-out;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .detail-card {
   background: #fff; width: 90%; max-width: 450px;
-  border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  overflow: hidden; animation: scaleIn 0.2s ease-out;
+  border-radius: 20px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden; animation: scaleIn 0.25s ease-out;
+  border: 1px solid rgba(255,255,255,0.5);
 }
 .detail-header {
   padding: 20px 24px; border-bottom: 1px solid #f1f5f9;

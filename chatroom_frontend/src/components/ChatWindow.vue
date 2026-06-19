@@ -300,13 +300,12 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(135deg, var(--surface-alt) 0%, var(--surface) 100%);
-  border-radius: var(--radius);
+  background: linear-gradient(180deg, #fafbff 0%, #ffffff 100%);
+  border-radius: 16px;
   padding: 20px;
   overflow: hidden;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border-color);
-  /* Permite que la lista de mensajes haga scroll en su interior */
+  box-shadow: 0 4px 20px rgba(79,70,229,0.05), 0 1px 3px rgba(0,0,0,0.03);
+  border: 1px solid rgba(79,70,229,0.06);
   min-height: 0;
 }
 
@@ -314,19 +313,19 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--surface);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+  border: 1px solid rgba(79,70,229,0.06);
+  border-radius: 14px;
   padding: 12px 16px;
   margin-bottom: 16px;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 2px 8px rgba(79,70,229,0.04);
 }
 .chat-topbar .left { display: flex; align-items: center; gap: 12px; }
-.chat-topbar .avatar { width: 40px; height: 40px; border-radius: 50%; background: #e2e8f0; color: #1f2937; display: flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.06); }
+.chat-topbar .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: 0 2px 8px rgba(79,70,229,0.12); }
 .chat-topbar .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .chat-topbar .avatar.group { background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end)); }
 .chat-topbar .meta { display: flex; flex-direction: column; }
-.chat-topbar .name { color: #334155; font-weight: 600; }
+.chat-topbar .name { color: #1e293b; font-weight: 700; font-size: 15px; }
 .chat-topbar .sub { color: #64748b; font-size: 12px; }
 .chat-topbar .actions { display: inline-flex; align-items: center; gap: 10px; }
 .chat-topbar .actions .search {
@@ -384,8 +383,14 @@ export default {
 .empty-hero { display: inline-flex; align-items: center; justify-content: center; color: #94a3b8; margin-bottom: 8px; }
 .empty-title { font-weight: 800; color: #334155; }
 .empty-sub { font-size: 12px; margin-top: 4px; }
-.empty-cta { margin-top: 10px; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(226,232,240,.9); background: #f1f5f9; color: #334155; font-weight: 700; cursor: pointer; }
-.empty-cta:hover { background: #e2e8f0; }
+.empty-cta {
+  margin-top: 10px; padding: 8px 16px; border-radius: 10px;
+  border: 1px solid rgba(79,70,229,0.15);
+  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+  color: #4f46e5; font-weight: 700; cursor: pointer;
+  transition: all 0.2s ease;
+}
+.empty-cta:hover { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,70,229,0.15); }
 
 /* Transiciones GPU-friendly para aparición / desaparición / reordenado */
 .msg-enter-active,
@@ -395,10 +400,10 @@ export default {
 .msg-move { transition: transform 180ms ease; will-change: transform; }
 .msg-leave-active { pointer-events: none; }
 .group-members-bar {
-  background: linear-gradient(135deg, var(--surface) 0%, var(--surface-alt) 100%);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, #fafbff 0%, #f5f7ff 100%);
+  border: 1px solid rgba(79,70,229,0.08);
   border-radius: 12px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -406,8 +411,9 @@ export default {
 }
 
 .members-title {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--brand-gradient-start);
+  font-size: 13px;
 }
 
 .members-list {
@@ -417,13 +423,16 @@ export default {
 }
 
 .member-chip {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
   color: #fff;
-  padding: 4px 8px;
+  padding: 4px 10px;
   border-radius: 9999px;
   font-size: 12px;
-  box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(79,70,229,0.2);
+  transition: transform 0.15s ease;
 }
+.member-chip:hover { transform: scale(1.05); }
 
 .member-chip.empty {
   background: #e2e8f0;
@@ -436,19 +445,21 @@ export default {
   right: 12px;
   bottom: 180px;
   z-index: 30;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
   color: #fff;
   border: none;
   border-radius: 9999px;
-  padding: 8px 14px;
+  padding: 8px 16px;
   font-weight: 600;
-  box-shadow: 0 6px 18px rgba(16,185,129,0.35);
+  font-size: 13px;
+  box-shadow: 0 4px 16px rgba(79,70,229,0.3);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .scroll-bottom-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(16,185,129,0.45);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(79,70,229,0.4);
 }
 
 .new-messages-banner {
@@ -457,15 +468,16 @@ export default {
   bottom: 236px;
   transform: translateX(-50%);
   z-index: 25;
-  background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
-  color: #7c2d12;
-  border: 1px solid #fcd34d;
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  color: #fff;
+  border: none;
   border-radius: 9999px;
-  padding: 6px 12px;
+  padding: 7px 16px;
   font-size: 12px;
   font-weight: 700;
-  box-shadow: 0 8px 18px rgba(250, 204, 21, 0.35);
+  box-shadow: 0 4px 16px rgba(79,70,229,0.3);
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .chat-window {
@@ -476,12 +488,12 @@ export default {
 .composer-bar {
   position: sticky;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  border-top: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid rgba(79,70,229,0.06);
   border-radius: 12px;
   padding: 8px;
-  box-shadow: var(--shadow-2);
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.03);
 }
 
 </style>

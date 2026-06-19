@@ -386,41 +386,59 @@ export default {
 .gap-2 { gap: 8px; }
 .actions-row { gap: 12px; row-gap: 14px; }
 .table thead th, .table tbody td { padding: 12px 16px; }
-.table .form-control, .table .form-select { min-height: 38px; min-width: 200px; }
-.table .badge { font-size: 12px; padding: 6px 8px; }
-.table thead th { position: sticky; top: 0; background: #fff; z-index: 2; }
-.table tbody tr:nth-child(even) { background-color: rgba(0,0,0,0.025); }
-.pagination .page-link { min-width: 36px; }
-.pagination .page-item.active .page-link { font-weight: 600; }
+.table .form-control, .table .form-select { min-height: 38px; min-width: 200px; border-radius: 8px; }
+.table .badge { font-size: 12px; padding: 6px 10px; border-radius: 8px; font-weight: 600; letter-spacing: 0.3px; }
+.table thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #475569; font-weight: 700; font-size: 0.85rem;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+.table tbody tr { transition: all 0.2s ease; }
+.table tbody tr:nth-child(even) { background-color: rgba(248,250,252,0.6); }
+.table tbody tr:hover { background-color: #eef2ff; transform: scale(1.001); }
+.pagination .page-link { min-width: 36px; border-radius: 8px; transition: all 0.2s; }
+.pagination .page-item.active .page-link { font-weight: 700; background: linear-gradient(135deg, #4f46e5, #6366f1); border-color: transparent; }
 
 .password-modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
   display: flex; align-items: center; justify-content: center; z-index: 1100;
+  animation: fadeIn 0.2s ease-out;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .password-modal {
-  background: #fff; padding: 20px; border-radius: 8px; width: 300px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  background: #fff; padding: 24px; border-radius: 16px; width: 340px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: scaleIn 0.2s ease-out;
 }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+.password-modal h5 { font-weight: 700; color: #1e293b; margin-bottom: 16px; }
 
 .btn-icon {
-  width: 32px; height: 32px; border: none; border-radius: 6px;
+  width: 34px; height: 34px; border: none; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.2s; color: #fff;
+  cursor: pointer; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
 }
-.btn-icon:hover { transform: translateY(-2px); filter: brightness(1.1); }
-.btn-icon-success { background: #10b981; }
-.btn-icon-warning { background: #f59e0b; }
-.btn-icon-danger { background: #ef4444; }
-.btn-icon-primary { background: #3b82f6; }
+.btn-icon:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+.btn-icon:active { transform: translateY(0); }
+.btn-icon-success { background: linear-gradient(135deg, #34d399, #10b981); }
+.btn-icon-warning { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+.btn-icon-danger { background: linear-gradient(135deg, #f87171, #ef4444); }
+.btn-icon-primary { background: linear-gradient(135deg, #60a5fa, #3b82f6); }
 
-.avatar-upload-wrapper { cursor: pointer; position: relative; width: 32px; height: 32px; }
-.mini-avatar { width: 32px; height: 32px; border-radius: 6px; object-fit: cover; border: 1px solid #e2e8f0; transition: transform 0.2s; display: block; }
-.avatar-upload-wrapper:hover .mini-avatar { border-color: #3b82f6; }
+.avatar-upload-wrapper { cursor: pointer; position: relative; width: 34px; height: 34px; }
+.mini-avatar {
+  width: 34px; height: 34px; border-radius: 10px; object-fit: cover;
+  border: 2px solid #e2e8f0; transition: all 0.25s ease; display: block;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+.avatar-upload-wrapper:hover .mini-avatar { border-color: #3b82f6; transform: scale(1.05); }
 .btn-remove-avatar {
-  position: absolute; top: -6px; right: -6px; width: 16px; height: 16px;
-  background: #ef4444; color: #fff; border-radius: 50%; border: none;
-  font-size: 12px; line-height: 1; display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity 0.2s; cursor: pointer;
+  position: absolute; top: -6px; right: -6px; width: 18px; height: 18px;
+  background: linear-gradient(135deg, #f87171, #ef4444); color: #fff; border-radius: 50%; border: 2px solid #fff;
+  font-size: 11px; line-height: 1; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: all 0.2s; cursor: pointer; box-shadow: 0 2px 4px rgba(239,68,68,0.3);
 }
 .avatar-upload-wrapper:hover .btn-remove-avatar { opacity: 1; }
 </style>

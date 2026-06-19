@@ -333,9 +333,9 @@ export default {
 
 /* Filtros más limpios */
 .filters-card {
-  background: #fff; border-radius: 12px; padding: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 20px;
-  border: 1px solid #f1f5f9;
+  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%); border-radius: 16px; padding: 20px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04); margin-bottom: 20px;
+  border: 1px solid rgba(79,70,229,0.08);
 }
 .form-label { font-weight: 600; color: #64748b; font-size: 0.85rem; margin-bottom: 4px; }
 .form-control {
@@ -354,8 +354,8 @@ export default {
 
 /* Tabla moderna */
 .table-card {
-  background: #fff; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;
+  background: #fff; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.05); border: 1px solid rgba(79,70,229,0.06);
 }
 .table { margin-bottom: 0; }
 .table thead th {
@@ -381,8 +381,8 @@ export default {
   display: flex; align-items: center; justify-content: center; z-index: 1050;
 }
 .modal-card {
-  background: #fff; border-radius: 12px; width: min(700px, 90vw);
-  box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); overflow: hidden;
+  background: #fff; border-radius: 16px; width: min(700px, 90vw);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.2); overflow: hidden;
   animation: modalIn 0.2s ease-out;
 }
 @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }

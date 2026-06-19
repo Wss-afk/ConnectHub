@@ -151,99 +151,110 @@ export default {
 
 <style scoped>
 .app-dock {
-  flex: 0 0 260px; /* ampliar caja del dock */
-  background: #ffffff;
-  border-right: 1px solid rgba(226, 232, 240, 0.8);
+  flex: 0 0 260px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
+  border-right: 1px solid rgba(226, 232, 240, 0.6);
   display: flex;
   flex-direction: column;
-  padding: 16px 20px; /* más espacio interior para el título */
+  padding: 16px 20px;
   height: 100vh;
   overflow-y: auto;
-  margin-right: 0; /* Reset margin, layout handled by parent */
+  margin-right: 0;
   position: sticky; top: 0;
-  z-index: 1000; /* Ensure dock and its modals stay on top of content */
+  z-index: 1000;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.03);
 }
 
 .brand {
   display: flex; align-items: center; gap: 14px;
-  padding: 12px 4px 24px 4px; /* aumenta separación del borde */
+  padding: 12px 4px 24px 4px;
   border-bottom: 1px solid rgba(226,232,240,0.6);
   margin-bottom: 24px;
 }
-.brand-logo { width: 36px; height: 36px; filter: drop-shadow(0 4px 10px rgba(79,70,229,.25)); }
+.brand-logo { width: 36px; height: 36px; filter: drop-shadow(0 4px 10px rgba(79,70,229,.25)); transition: transform 0.3s ease; }
+.brand-logo:hover { transform: rotate(-8deg) scale(1.08); }
 .brand-name {
-  font-size: 22px; font-weight: 800; letter-spacing: -0.5px; color: #1e293b;
+  font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #1e293b 0%, #4f46e5 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.menu { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.menu { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .menu-item {
   display: flex; align-items: center; gap: 14px;
   padding: 14px 16px; border-radius: 14px; cursor: pointer;
-  color: #64748b; background: transparent; transition: all .2s ease;
-  font-weight: 600;
+  color: #64748b; background: transparent; transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600; position: relative; overflow: hidden;
 }
 .menu-item .icon { width: 24px; text-align: center; font-size: 20px; display: flex; align-items: center; justify-content: center; }
 .menu-item .label { font-weight: 600; font-size: 0.95rem; letter-spacing: 0.2px; }
-.menu-item:hover { background: #f8fafc; color: #334155; transform: translateX(4px); }
+.menu-item:hover { background: rgba(79,70,229,0.04); color: #334155; transform: translateX(4px); }
 .menu-item.active {
   color: var(--brand-gradient-start);
-  background: #eff6ff;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 100%);
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.12), inset 0 0 0 1px rgba(79,70,229,0.08);
+}
+.menu-item.active::before {
+  content: ''; position: absolute; left: 0; top: 8px; bottom: 8px; width: 3px;
+  background: linear-gradient(180deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  border-radius: 0 4px 4px 0;
 }
 
 .dock-footer {
   margin-top: auto;
   padding: 24px 0 16px;
-  background: #ffffff;
+  background: transparent;
 }
 .logout-btn {
   width: 100%;
   padding: 10px 12px;
   border-radius: 12px;
-  border: none;
-  background: var(--color-bg-gradient-start);
-  color: var(--brand-gradient-start);
+  border: 1px solid rgba(239,68,68,0.15);
+  background: linear-gradient(135deg, #fef2f2 0%, #fff1f2 100%);
+  color: #ef4444;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: var(--shadow);
+  transition: all 0.25s ease;
 }
-.logout-btn:hover { background: var(--surface-alt); color: var(--brand-gradient-end); }
+.logout-btn:hover { background: linear-gradient(135deg, #fee2e2 0%, #fecdd3 100%); color: #dc2626; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(239,68,68,0.15); }
 
-/* Tarjeta de usuario actual, encima del botón de cerrar sesión */
+/* Tarjeta de usuario actual */
 .current-user {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
   padding: 10px 12px;
-  border-radius: 12px;
-  background: #ffffff; /* fondo blanco */
-  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  border: 1px solid rgba(79,70,229,0.1);
   color: #334155;
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.25s ease;
 }
-.cu-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.35); }
-.cu-avatar.placeholder { display:flex; align-items:center; justify-content:center; background:#e2e8f0; color:#334155; cursor:pointer; }
+.current-user:hover { box-shadow: 0 4px 16px rgba(79,70,229,0.1); border-color: rgba(79,70,229,0.2); transform: translateY(-1px); }
+.cu-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(79,70,229,0.15); box-shadow: 0 2px 8px rgba(79,70,229,0.1); }
+.cu-avatar.placeholder { display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color:#4f46e5; cursor:pointer; }
 .cu-initial { font-weight: 800; }
 .cu-info { flex: 1; min-width: 0; }
-.cu-name { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.cu-sub { font-size: 12px; color: #64748b; }
-/* Menú eliminado; acciones disponibles en el modal de preview */
+.cu-name { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1e293b; }
+.cu-sub { font-size: 12px; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.cu-sub::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #10b981; display: inline-block; }
 
-.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 1050; }
-.modal-card { background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-width: 90vw; }
-.avatar-preview { max-width: 56vw; max-height: 70vh; display: block; border-radius: 12px; }
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px; }
-.modal-btn { padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border-color); background: #f1f5f9; cursor: pointer; }
-.modal-btn:hover { background: #e2e8f0; }
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center; z-index: 1050; backdrop-filter: blur(4px); }
+.modal-card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); max-width: 90vw; animation: modalPop 0.2s ease-out; }
+@keyframes modalPop { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+.avatar-preview { max-width: 56vw; max-height: 70vh; display: block; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px; }
+.modal-btn { padding: 8px 14px; border-radius: 10px; border: 1px solid var(--border-color); background: #f8fafc; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+.modal-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
 
-/* Línea divisoria entre tarjeta de usuario y botón de salida */
+/* Línea divisoria */
 .footer-divider {
   height: 1px;
-  background: #111827; /* negro/dark */
-  opacity: 0.25;
+  background: linear-gradient(90deg, transparent, rgba(148,163,184,0.3), transparent);
   margin: 10px 0 12px;
-  border-radius: 9999px;
 }
 
 @media (max-width: 768px) {

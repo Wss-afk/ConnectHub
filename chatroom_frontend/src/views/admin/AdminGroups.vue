@@ -380,40 +380,54 @@ export default {
   max-height: 240px;
   overflow: auto;
 }
-.member-item { display: flex; align-items: center; gap: 6px; }
+.member-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 8px;
+  transition: all 0.2s ease; cursor: pointer;
+}
+.member-item:hover { background: #f1f5f9; }
 .gap-2 { gap: 8px; }
 .members-disabled { opacity: 0.65; pointer-events: none; }
 .create-group .form-label { font-weight: 600; color: #495057; }
 .create-group .text-muted { font-size: 12px; }
 
-/* Modal minimalista sin dependencias */
+/* Modal */
 .modal-backdrop-custom {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1050;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1050; animation: fadeIn 0.2s ease-out;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .modal-custom {
   background: #fff;
   width: min(720px, calc(100% - 32px));
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border-radius: 16px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+  animation: scaleIn 0.2s ease-out;
 }
-.modal-header, .modal-footer { padding: 12px 16px; border-bottom: 1px solid #eee; }
-.modal-footer { border-top: 1px solid #eee; border-bottom: 0; }
-.modal-body { padding: 16px; }
-.group-name-text { display: block; text-align: center; font-weight: 400; color: #495057; }
-/* Título más ligero y centrado */
-.card-header { text-align: center; font-weight: 700; color: #495057; }
-.modal-header h5 { flex: 1; text-align: center; font-weight: 700; color: #495057; }
-/* Centrar y aligerar el encabezado de la columna Nombre */
-.table thead th:nth-child(2) { text-align: center; font-weight: 700; color: #495057; }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+.modal-header, .modal-footer { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; }
+.modal-footer { border-top: 1px solid #f1f5f9; border-bottom: 0; }
+.modal-body { padding: 20px; }
+.group-name-text { display: block; text-align: center; font-weight: 500; color: #334155; }
+.card-header {
+  text-align: center; font-weight: 700; color: #1e293b;
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+}
+.modal-header h5 { flex: 1; text-align: center; font-weight: 700; color: #1e293b; }
+.table thead th:nth-child(2) { text-align: center; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; }
 .table-scroll { max-height: 420px; overflow: auto; }
-.table thead th { position: sticky; top: 0; background: #fff; z-index: 2; }
-.table tbody tr:nth-child(even) { background-color: rgba(0,0,0,0.025); }
-.pagination .page-link { min-width: 36px; }
-.pagination .page-item.active .page-link { font-weight: 600; }
+.table thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  color: #475569; font-weight: 700; font-size: 0.85rem;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  border-bottom: 2px solid #e2e8f0;
+}
+.table tbody tr { transition: all 0.2s ease; }
+.table tbody tr:nth-child(even) { background-color: rgba(248,250,252,0.6); }
+.table tbody tr:hover { background-color: #eef2ff; }
+.pagination .page-link { min-width: 36px; border-radius: 8px; transition: all 0.2s; }
+.pagination .page-item.active .page-link { font-weight: 700; background: linear-gradient(135deg, #4f46e5, #6366f1); border-color: transparent; }
 </style>

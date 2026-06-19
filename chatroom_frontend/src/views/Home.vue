@@ -672,7 +672,7 @@ export default {
 </script>
 
 <style scoped>
-.home-page { display: flex; min-height: 100vh; background: #f8fafc; }
+.home-page { display: flex; min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #f0f4ff 50%, #f8fafc 100%); }
 .home-content { flex: 1; padding: 24px; max-width: 1600px; margin: 0 auto; }
 
 /* Animations */
@@ -683,15 +683,17 @@ export default {
 
 .welcome-bar {
   display: flex; align-items: center; justify-content: space-between;
-  background: #fff;
+  background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
   color: #1e293b; border-radius: 20px; padding: 20px 24px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 24px rgba(79,70,229,0.06), 0 1px 3px rgba(0,0,0,0.03);
   margin-bottom: 24px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid rgba(79,70,229,0.06);
   animation: slideUpFade 0.5s ease-out both;
   position: relative;
   overflow: hidden;
+  transition: box-shadow 0.3s ease;
 }
+.welcome-bar:hover { box-shadow: 0 8px 32px rgba(79,70,229,0.1), 0 1px 3px rgba(0,0,0,0.03); }
 
 /* Decoration line */
 .welcome-bar::before {
@@ -756,8 +758,8 @@ export default {
 .nav-btn:hover, .dots-btn:hover, .add-btn:hover {
   background: #f8fafc; border-color: #cbd5e1; color: var(--brand-gradient-start); transform: translateY(-1px);
 }
-.add-btn { background: var(--brand-gradient-start); color: #fff; border: none; }
-.add-btn:hover { background: var(--brand-gradient-end); color: #fff; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); border-color: transparent; }
+.add-btn { background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end)); color: #fff; border: none; }
+.add-btn:hover { background: linear-gradient(135deg, var(--brand-gradient-end), var(--brand-gradient-start)); color: #fff; box-shadow: 0 4px 14px rgba(79,70,229,0.35); border-color: transparent; }
 
 .view-all {
   color: var(--brand-gradient-start); text-decoration: none; font-weight: 600; font-size: 0.9rem;
@@ -783,7 +785,7 @@ export default {
 
 .calendar-card:hover, .tasks-card:hover, .notification-card:hover, .quicknotes-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+  box-shadow: 0 20px 40px -10px rgba(79,70,229,0.1), 0 0 0 1px rgba(79,70,229,0.04);
 }
 
 /* Custom Scrollbar for lists */
@@ -811,8 +813,9 @@ export default {
 }
 .day:hover:not(.today) { background: #f1f5f9; color: var(--brand-gradient-start); transform: scale(1.05); }
 .day.today {
-  background: var(--brand-gradient-start);
-  color: #fff; border: none; box-shadow: 0 8px 16px rgba(37, 99, 235, 0.25);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  color: #fff; border: none;
+  box-shadow: 0 8px 20px rgba(79,70,229,0.3);
   transform: scale(1.05);
 }
 .blank { height: 48px; }
@@ -834,7 +837,7 @@ export default {
   background: #fff; border: 1px solid #f1f5f9; border-radius: 12px; padding: 12px 16px;
   transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
-.task-item:hover { border-color: #e2e8f0; transform: translateX(4px); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+.task-item:hover { border-color: rgba(79,70,229,0.15); transform: translateX(4px); box-shadow: 0 4px 16px rgba(79,70,229,0.08); background: linear-gradient(90deg, rgba(79,70,229,0.02) 0%, transparent 100%); }
 .task-item label { display: flex; align-items: center; gap: 12px; font-weight: 600; color: #334155; cursor: pointer; font-size: 0.95rem; }
 .task-item input[type="checkbox"] {
   accent-color: var(--brand-gradient-start); width: 18px; height: 18px; cursor: pointer;
@@ -863,7 +866,7 @@ export default {
   background: #fff; border: 1px solid #f1f5f9; border-radius: 16px; padding: 16px;
   transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
-.notification-item:hover { background: #fafafa; border-color: #e2e8f0; transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.03); }
+.notification-item:hover { background: linear-gradient(90deg, rgba(79,70,229,0.02) 0%, transparent 100%); border-color: rgba(79,70,229,0.12); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79,70,229,0.06); }
 .notification-main { display: flex; flex-direction: column; gap: 6px; }
 .notification-title { display: flex; align-items: center; font-weight: 700; color: #1e293b; font-size: 0.95rem; gap: 8px; }
 .notification-text { color: #475569; font-weight: 500; font-size: 0.9rem; line-height: 1.5; }
@@ -916,14 +919,22 @@ export default {
 
 /* Modal */
 .modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000;
+  position: fixed; inset: 0; background: rgba(15,23,42,0.5); z-index: 1000;
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease-out;
 }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .modal-card {
   background: #fff; width: 100%; max-width: 480px; border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.2);
   display: flex; flex-direction: column; max-height: 90vh; overflow: hidden;
+  animation: modalSlideUp 0.25s ease-out;
+}
+@keyframes modalSlideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .modal-header {
   padding: 16px 20px; border-bottom: 1px solid #f1f5f9; display: flex;
@@ -979,10 +990,11 @@ export default {
 }
 .btn-cancel:hover { background: #f1f5f9; color: #1e293b; }
 .btn-primary {
-  background: var(--brand-gradient-start); border: none; color: #fff; padding: 8px 20px;
-  border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 10px rgba(37,99,235,0.3);
+  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end)); border: none; color: #fff; padding: 8px 20px;
+  border-radius: 10px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(79,70,229,0.3);
+  transition: all 0.2s ease;
 }
-.btn-primary:hover { background: var(--brand-gradient-end); transform: translateY(-1px); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(79,70,229,0.4); }
 
 /* Task Item Clickable */
 .task-item.clickable {

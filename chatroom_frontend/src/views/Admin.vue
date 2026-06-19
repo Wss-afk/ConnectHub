@@ -74,16 +74,33 @@ export default {
 .admin-actions { gap: 8px; }
 .nav-link {
   cursor: pointer;
+  transition: all 0.25s ease;
+  border-radius: 10px 10px 0 0;
+  font-weight: 600;
+}
+.nav-link:hover {
+  background: rgba(79,70,229,0.04);
+}
+.nav-link.active {
+  background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%) !important;
+  color: #4f46e5 !important;
+  border-color: transparent !important;
+  box-shadow: 0 -2px 8px rgba(79,70,229,0.08);
 }
 .admin-logout-btn {
-  background: #1f2937; /* gris oscuro para alto contraste */
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   color: #ffffff;
   border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .admin-logout-btn:hover {
-  background: #111827;
+  background: linear-gradient(135deg, #111827 0%, #0f172a 100%);
   color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 </style>
