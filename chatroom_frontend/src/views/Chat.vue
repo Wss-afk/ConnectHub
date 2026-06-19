@@ -7,22 +7,6 @@
         <div class="left">
           <h1 class="topbar-title">Mensajes</h1>
         </div>
-        <div class="topbar-center">
-          <div class="topbar-search">
-            <Icon name="search" :size="16" />
-            <input v-model="sidebarSearch" placeholder="Buscar contactos y grupos..." />
-          </div>
-        </div>
-        <div class="topbar-right">
-          <div class="topbar-profile">
-            <div class="topbar-avatar">
-              <img v-if="currentUser && currentUser.avatarUrl" :src="currentUser.avatarUrl" :alt="currentUser.username" />
-              <span v-else class="topbar-avatar-placeholder">{{ userInitials }}</span>
-              <span class="topbar-status-dot"></span>
-            </div>
-            <span class="topbar-username">{{ currentUser && currentUser.username }}</span>
-          </div>
-        </div>
       </header>
       <div class="chat-body">
         <div class="sidebar">
@@ -94,42 +78,31 @@
           </template>
           <template v-else>
             <div class="empty-chat" aria-live="polite">
-              <div class="empty-card" role="region" aria-label="Selecciona un chat">
-                <div class="empty-hero" aria-hidden="true">
-                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v7A3.5 3.5 0 0 1 16.5 16H13l-3.5 3.5c-.6.6-1.5.18-1.5-.7V16H7.5A3.5 3.5 0 0 1 4 12.5v-7Z" fill="currentColor"/>
-                  </svg>
+              <div class="empty-hero" aria-hidden="true">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v7A3.5 3.5 0 0 1 16.5 16H13l-3.5 3.5c-.6.6-1.5.18-1.5-.7V16H7.5A3.5 3.5 0 0 1 4 12.5v-7Z" fill="currentColor"/>
+                </svg>
+              </div>
+              <div class="empty-title">Selecciona un chat o un grupo</div>
+              <div class="empty-sub">Usa el panel de la izquierda para comenzar a conversar.</div>
+              <div class="empty-features">
+                <div class="feature-card">
+                  <div class="feature-icon feature-icon--chat">
+                    <Icon name="message-circle" :size="20" />
+                  </div>
+                  <div class="feature-label">Mensajería</div>
                 </div>
-                <div class="empty-title">Selecciona un chat o un grupo</div>
-                <div class="empty-sub">Usa el panel de la izquierda para comenzar a conversar.</div>
-                <div class="empty-features">
-                  <div class="feature-card">
-                    <div class="feature-icon feature-icon--chat">
-                      <Icon name="message-circle" :size="20" />
-                    </div>
-                    <div class="feature-text">
-                      <div class="feature-label">Mensajería instantánea</div>
-                      <div class="feature-desc">Envía y recibe mensajes en tiempo real</div>
-                    </div>
+                <div class="feature-card">
+                  <div class="feature-icon feature-icon--group">
+                    <Icon name="users" :size="20" />
                   </div>
-                  <div class="feature-card">
-                    <div class="feature-icon feature-icon--group">
-                      <Icon name="users" :size="20" />
-                    </div>
-                    <div class="feature-text">
-                      <div class="feature-label">Chats grupales</div>
-                      <div class="feature-desc">Crea grupos y colabora con tu equipo</div>
-                    </div>
+                  <div class="feature-label">Grupos</div>
+                </div>
+                <div class="feature-card">
+                  <div class="feature-icon feature-icon--file">
+                    <Icon name="paperclip" :size="20" />
                   </div>
-                  <div class="feature-card">
-                    <div class="feature-icon feature-icon--file">
-                      <Icon name="paperclip" :size="20" />
-                    </div>
-                    <div class="feature-text">
-                      <div class="feature-label">Compartir archivos</div>
-                      <div class="feature-desc">Envía imágenes y documentos fácilmente</div>
-                    </div>
-                  </div>
+                  <div class="feature-label">Archivos</div>
                 </div>
               </div>
             </div>
@@ -973,107 +946,6 @@ body {
 .center { display: none; }
 .right { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 
-/* Topbar center search */
-.topbar-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  max-width: 420px;
-  margin: 0 auto;
-}
-.topbar-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #f1f5f9, #f8fafc);
-  padding: 8px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(79,70,229,0.06);
-  width: 100%;
-  transition: all 0.25s ease;
-  color: #94a3b8;
-}
-.topbar-search:focus-within {
-  background: #fff;
-  border-color: rgba(79,70,229,0.2);
-  box-shadow: 0 2px 12px rgba(79,70,229,0.08);
-  color: var(--brand-gradient-start);
-}
-.topbar-search input {
-  border: none;
-  background: transparent;
-  outline: none;
-  flex: 1;
-  font-size: 13px;
-  color: #334155;
-}
-.topbar-search input::placeholder { color: #94a3b8; }
-
-/* Topbar right profile */
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.topbar-profile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 14px 6px 6px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, rgba(79,70,229,0.04), rgba(6,182,212,0.03));
-  border: 1px solid rgba(79,70,229,0.06);
-  transition: all 0.2s ease;
-}
-.topbar-profile:hover {
-  background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(6,182,212,0.06));
-  box-shadow: 0 2px 8px rgba(79,70,229,0.08);
-}
-.topbar-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  position: relative;
-  overflow: visible;
-}
-.topbar-avatar img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid rgba(79,70,229,0.1);
-}
-.topbar-avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
-  color: #fff;
-  font-weight: 700;
-  font-size: 13px;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.25);
-}
-.topbar-status-dot {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #22c55e;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px rgba(34,197,94,0.2);
-  z-index: 1;
-}
-.topbar-username {
-  font-weight: 700;
-  font-size: 13px;
-  color: #334155;
-}
-
 .search { display: flex; gap: 8px; background: var(--surface-alt); padding: 8px 10px; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: inset 0 1px 0 rgba(255,255,255,0.8); }
 .search input { border: none; background: transparent; outline: none; min-width: 220px; font-size: 14px; }
 .search-btn { border: none; background: var(--color-bg-gradient-start); color: var(--brand-gradient-start); border-radius: 10px; padding: 6px 10px; cursor: pointer; }
@@ -1396,62 +1268,15 @@ body {
 .empty-chat {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: #64748b;
   padding: 24px;
-  background: radial-gradient(ellipse at center, rgba(79,70,229,0.03) 0%, transparent 70%);
-}
-.empty-card {
-  position: relative;
-  width: 520px;
-  max-width: 92%;
-  border-radius: 24px;
-  background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
-  box-shadow:
-    0 20px 50px rgba(79,70,229,0.08),
-    0 4px 12px rgba(0,0,0,0.03),
-    inset 0 1px 0 rgba(255,255,255,0.8);
-  padding: 40px 32px 36px;
-  border: 1px solid rgba(79,70,229,0.08);
-  overflow: hidden;
-}
-
-.empty-card::before,
-.empty-card::after {
-  content: '';
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(24px);
-  opacity: 0.25;
-}
-
-.empty-card::before {
-  width: 200px;
-  height: 200px;
-  left: -50px;
-  top: -50px;
-  background: radial-gradient(closest-side, var(--brand-gradient-start), transparent);
-  animation: emptyGlow1 6s ease-in-out infinite;
-}
-
-.empty-card::after {
-  width: 260px;
-  height: 260px;
-  right: -70px;
-  bottom: -70px;
-  background: radial-gradient(closest-side, var(--brand-gradient-end), transparent);
-  animation: emptyGlow2 6s ease-in-out infinite 1s;
-}
-
-@keyframes emptyGlow1 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
-  50% { transform: translate(10px, 10px) scale(1.1); opacity: 0.35; }
-}
-@keyframes emptyGlow2 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
-  50% { transform: translate(-10px, -10px) scale(1.15); opacity: 0.3; }
+  background:
+    radial-gradient(ellipse at 30% 30%, rgba(79,70,229,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 70%, rgba(6,182,212,0.04) 0%, transparent 50%);
 }
 
 .empty-hero {
@@ -1524,8 +1349,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 18px 12px;
+  gap: 8px;
+  padding: 16px 10px;
   border-radius: 16px;
   background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(248,250,252,0.6));
   border: 1px solid rgba(79,70,229,0.06);
@@ -1549,17 +1374,10 @@ body {
 .feature-icon--chat { background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end)); }
 .feature-icon--group { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
 .feature-icon--file { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-.feature-text { text-align: center; }
 .feature-label {
   font-weight: 700;
   font-size: 12px;
-  color: #1e293b;
-  margin-bottom: 2px;
-}
-.feature-desc {
-  font-size: 11px;
-  color: #94a3b8;
-  line-height: 1.4;
+  color: #334155;
 }
 
 @keyframes float {
@@ -1606,21 +1424,12 @@ body {
     font-size: 1.1em;
   }
   
-  .topbar-search input {
-    min-width: 0;
-  }
-  .topbar-username {
-    display: none;
-  }
   .empty-features {
-    flex-direction: column;
     gap: 8px;
   }
   .feature-card {
-    flex-direction: row;
-    padding: 12px 16px;
+    padding: 12px 8px;
   }
-  .feature-text { text-align: left; }
 }
 
 /* 响应式设计 - 移动设备 */
@@ -1650,12 +1459,6 @@ body {
     min-height: 0;
   }
   
-  .topbar-center {
-    display: none;
-  }
-  .topbar-username {
-    display: none;
-  }
   .topbar {
     padding: 12px 16px;
   }
