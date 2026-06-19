@@ -18,26 +18,17 @@
               <button :class="['tab', activeTab === 'groups' && 'active']" role="tab" aria-selected="activeTab==='groups'" @click="activeTab='groups'">Grupos</button>
             </nav>
           </div>
-          <div class="sidebar-search-wrap">
-            <div class="sidebar-search-input">
-              <Icon name="search" :size="14" />
-              <input v-model="sidebarSearch" placeholder="Filtrar..." />
-              <button v-if="sidebarSearch" class="sidebar-search-clear" @click="sidebarSearch=''">
-                <Icon name="x" :size="14" />
-              </button>
-            </div>
-          </div>
           <div class="chats-card">
             <template v-if="activeTab==='all'">
-              <UserList :users="filteredSortedUsers" :loading="loadingUsers" :unreadCounts="unreadCounts" :selectedUser="selectedUser" :onlineUsers="onlineUsers" :lastMessageMap="lastMessageMap" @select="selectUser" @refresh="refreshUsers" />
+              <UserList :users="sortedUsers" :loading="loadingUsers" :unreadCounts="unreadCounts" :selectedUser="selectedUser" :onlineUsers="onlineUsers" :lastMessageMap="lastMessageMap" @select="selectUser" @refresh="refreshUsers" />
               <div class="divider"></div>
-              <GroupList :groups="filteredGroups" :loading="loadingGroups" :groupUnreadCounts="groupUnreadCounts" :selectedGroup="selectedGroup" @select="selectGroup" @refresh="refreshGroups" />
+              <GroupList :groups="groups" :loading="loadingGroups" :groupUnreadCounts="groupUnreadCounts" :selectedGroup="selectedGroup" @select="selectGroup" @refresh="refreshGroups" />
             </template>
             <template v-else-if="activeTab==='contacts'">
-              <UserList :users="filteredSortedUsers" :loading="loadingUsers" :unreadCounts="unreadCounts" :selectedUser="selectedUser" :onlineUsers="onlineUsers" :lastMessageMap="lastMessageMap" @select="selectUser" @refresh="refreshUsers" />
+              <UserList :users="sortedUsers" :loading="loadingUsers" :unreadCounts="unreadCounts" :selectedUser="selectedUser" :onlineUsers="onlineUsers" :lastMessageMap="lastMessageMap" @select="selectUser" @refresh="refreshUsers" />
             </template>
             <template v-else>
-              <GroupList :groups="filteredGroups" :loading="loadingGroups" :groupUnreadCounts="groupUnreadCounts" :selectedGroup="selectedGroup" @select="selectGroup" @refresh="refreshGroups" />
+              <GroupList :groups="groups" :loading="loadingGroups" :groupUnreadCounts="groupUnreadCounts" :selectedGroup="selectedGroup" @select="selectGroup" @refresh="refreshGroups" />
             </template>
           </div>
         </div>
@@ -78,32 +69,14 @@
           </template>
           <template v-else>
             <div class="empty-chat" aria-live="polite">
-              <div class="empty-hero" aria-hidden="true">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v7A3.5 3.5 0 0 1 16.5 16H13l-3.5 3.5c-.6.6-1.5.18-1.5-.7V16H7.5A3.5 3.5 0 0 1 4 12.5v-7Z" fill="currentColor"/>
-                </svg>
-              </div>
-              <div class="empty-title">Selecciona un chat o un grupo</div>
-              <div class="empty-sub">Usa el panel de la izquierda para comenzar a conversar.</div>
-              <div class="empty-features">
-                <div class="feature-card">
-                  <div class="feature-icon feature-icon--chat">
-                    <Icon name="message-circle" :size="20" />
-                  </div>
-                  <div class="feature-label">Mensajería</div>
+              <div class="empty-card" role="region" aria-label="Selecciona un chat">
+                <div class="empty-hero" aria-hidden="true">
+                  <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v7A3.5 3.5 0 0 1 16.5 16H13l-3.5 3.5c-.6.6-1.5.18-1.5-.7V16H7.5A3.5 3.5 0 0 1 4 12.5v-7Z" fill="currentColor"/>
+                  </svg>
                 </div>
-                <div class="feature-card">
-                  <div class="feature-icon feature-icon--group">
-                    <Icon name="users" :size="20" />
-                  </div>
-                  <div class="feature-label">Grupos</div>
-                </div>
-                <div class="feature-card">
-                  <div class="feature-icon feature-icon--file">
-                    <Icon name="paperclip" :size="20" />
-                  </div>
-                  <div class="feature-label">Archivos</div>
-                </div>
+                <div class="empty-title">Selecciona un chat o un grupo</div>
+                <div class="empty-sub">Usa el panel de la izquierda para comenzar a conversar.</div>
               </div>
             </div>
           </template>
@@ -157,22 +130,6 @@ export default {
         const authorMatch = includesQ(senderName)
         return contentMatch || authorMatch
       })
-    },
-    filteredSortedUsers() {
-      const q = (this.sidebarSearch || '').trim().toLowerCase()
-      if (!q) return this.sortedUsers
-      return this.sortedUsers.filter(u => {
-        const name = (u.username || '').toLowerCase()
-        return name.includes(q)
-      })
-    },
-    filteredGroups() {
-      const q = (this.sidebarSearch || '').trim().toLowerCase()
-      if (!q) return this.groups
-      return this.groups.filter(g => {
-        const name = (g.name || '').toLowerCase()
-        return name.includes(q)
-      })
     }
   },
   data() {
@@ -198,7 +155,6 @@ export default {
       showEmojiPicker: false,
       emojis: ['😀','😁','😂','😊','😍','😎','😘','😅','😉','🤩','🥳','😇','🙌','👍','👏','🔥','✨','❤️','💯','🎉'],
       activeTab: 'all',
-      sidebarSearch: '',
       lastMessageMap: {},
       loadingUsers: false,
       loadingGroups: false,
@@ -1096,52 +1052,7 @@ body {
   border: none;
   box-shadow: none;
   padding: 0;
-  flex: 1;
-  overflow-y: auto;
 }
-
-/* Sidebar search filter */
-.sidebar-search-wrap {
-  padding: 8px 14px 4px;
-}
-.sidebar-search-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: #f1f5f9;
-  border: 1px solid transparent;
-  color: #94a3b8;
-  transition: all 0.2s ease;
-}
-.sidebar-search-input:focus-within {
-  background: #fff;
-  border-color: rgba(79,70,229,0.15);
-  box-shadow: 0 1px 6px rgba(79,70,229,0.06);
-  color: var(--brand-gradient-start);
-}
-.sidebar-search-input input {
-  border: none;
-  background: transparent;
-  outline: none;
-  flex: 1;
-  font-size: 13px;
-  color: #334155;
-}
-.sidebar-search-input input::placeholder { color: #94a3b8; }
-.sidebar-search-clear {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  transition: color 0.15s;
-}
-.sidebar-search-clear:hover { color: #ef4444; }
 .divider {
   height: 1px;
   margin: 4px 20px;
@@ -1268,15 +1179,58 @@ body {
 .empty-chat {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
   color: #64748b;
   padding: 24px;
-  background:
-    radial-gradient(ellipse at 30% 30%, rgba(79,70,229,0.04) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 70%, rgba(6,182,212,0.04) 0%, transparent 50%);
+  background: radial-gradient(ellipse at center, rgba(79,70,229,0.03) 0%, transparent 70%);
+}
+.empty-card {
+  position: relative;
+  width: 520px;
+  max-width: 92%;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+  box-shadow:
+    0 20px 50px rgba(79,70,229,0.08),
+    0 4px 12px rgba(0,0,0,0.03),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  padding: 40px 32px 36px;
+  border: 1px solid rgba(79,70,229,0.08);
+  overflow: hidden;
+}
+.empty-card::before,
+.empty-card::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(24px);
+  opacity: 0.25;
+}
+.empty-card::before {
+  width: 200px;
+  height: 200px;
+  left: -50px;
+  top: -50px;
+  background: radial-gradient(closest-side, var(--brand-gradient-start), transparent);
+  animation: emptyGlow1 6s ease-in-out infinite;
+}
+.empty-card::after {
+  width: 260px;
+  height: 260px;
+  right: -70px;
+  bottom: -70px;
+  background: radial-gradient(closest-side, var(--brand-gradient-end), transparent);
+  animation: emptyGlow2 6s ease-in-out infinite 1s;
+}
+@keyframes emptyGlow1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
+  50% { transform: translate(10px, 10px) scale(1.1); opacity: 0.35; }
+}
+@keyframes emptyGlow2 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
+  50% { transform: translate(-10px, -10px) scale(1.15); opacity: 0.3; }
 }
 
 .empty-hero {
@@ -1336,50 +1290,6 @@ body {
   z-index: 1;
 }
 
-/* Empty state feature cards */
-.empty-features {
-  display: flex;
-  gap: 12px;
-  margin-top: 28px;
-  position: relative;
-  z-index: 1;
-}
-.feature-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 10px;
-  border-radius: 16px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(248,250,252,0.6));
-  border: 1px solid rgba(79,70,229,0.06);
-  transition: all 0.25s ease;
-  cursor: default;
-}
-.feature-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(79,70,229,0.1);
-  border-color: rgba(79,70,229,0.12);
-  background: linear-gradient(180deg, #fff, #fafbff);
-}
-.feature-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-}
-.feature-icon--chat { background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end)); }
-.feature-icon--group { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
-.feature-icon--file { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
-.feature-label {
-  font-weight: 700;
-  font-size: 12px;
-  color: #334155;
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
@@ -1424,12 +1334,6 @@ body {
     font-size: 1.1em;
   }
   
-  .empty-features {
-    gap: 8px;
-  }
-  .feature-card {
-    padding: 12px 8px;
-  }
 }
 
 /* 响应式设计 - 移动设备 */
@@ -1457,13 +1361,6 @@ body {
   .main-chat {
     flex: 1;
     min-height: 0;
-  }
-  
-  .topbar {
-    padding: 12px 16px;
-  }
-  .sidebar-search-wrap {
-    padding: 6px 10px 2px;
   }
   
   .chat-input-area {
