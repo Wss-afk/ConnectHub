@@ -30,7 +30,7 @@ export default {
   background: linear-gradient(90deg, transparent, var(--border-color), transparent);
 }
 .label {
-  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  background: linear-gradient(135deg, #faf8f5, #f5f0ea);
   color: var(--color-text-muted);
   border-radius: 9999px;
   padding: 5px 14px;
@@ -38,7 +38,7 @@ export default {
   font-weight: 700;
   letter-spacing: 0.3px;
   text-transform: uppercase;
-  border: 1px solid rgba(226,232,240,0.6);
+  border: 1px solid rgba(231,224,215,0.6);
   box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   white-space: nowrap;
 }

@@ -1,24 +1,31 @@
 <template>
   <div class="chat-page">
     <AppDock />
-    <div class="content-area">
+    <section class="chat-shell">
       <div v-if="toast" class="toast" :class="toastClass()">{{ toast.message }}</div>
-      <header class="topbar">
-        <div class="left">
-          <h1 class="topbar-title">Mensajes</h1>
+      <header class="chat-page-header">
+        <div class="chat-page-title-wrap">
+          <p class="chat-page-kicker">ConnectHub</p>
+          <h1 class="chat-page-title">Messages</h1>
+          <p class="chat-page-subtitle">Unread first. Noise last.</p>
         </div>
       </header>
-      <div class="chat-body">
-        <div class="sidebar">
-        
-          <div class="chats-header">
-            <nav class="chats-tabs" role="tablist" aria-label="Listado de chats">
-              <button :class="['tab', activeTab === 'all' && 'active']" role="tab" aria-selected="activeTab==='all'" @click="activeTab='all'">Todos</button>
-              <button :class="['tab', activeTab === 'contacts' && 'active']" role="tab" aria-selected="activeTab==='contacts'" @click="activeTab='contacts'">Contactos</button>
-              <button :class="['tab', activeTab === 'groups' && 'active']" role="tab" aria-selected="activeTab==='groups'" @click="activeTab='groups'">Grupos</button>
+      <div class="chat-workbench">
+        <aside class="conversation-rail">
+          <div class="rail-header">
+            <div class="rail-title-row">
+              <div>
+                <div class="rail-title">Conversations</div>
+                <div class="rail-subtitle">Jump fast. Stay focused.</div>
+              </div>
+            </div>
+            <nav class="chats-tabs" role="tablist" aria-label="Chat list">
+              <button :class="['tab', activeTab === 'all' && 'active']" role="tab" aria-selected="activeTab==='all'" @click="activeTab='all'">All</button>
+              <button :class="['tab', activeTab === 'contacts' && 'active']" role="tab" aria-selected="activeTab==='contacts'" @click="activeTab='contacts'">Contacts</button>
+              <button :class="['tab', activeTab === 'groups' && 'active']" role="tab" aria-selected="activeTab==='groups'" @click="activeTab='groups'">Groups</button>
             </nav>
           </div>
-          <div class="chats-card">
+          <div class="rail-body">
             <template v-if="activeTab==='all'">
               <UserList :users="sortedUsers" :loading="loadingUsers" :unreadCounts="unreadCounts" :selectedUser="selectedUser" :onlineUsers="onlineUsers" :lastMessageMap="lastMessageMap" @select="selectUser" @refresh="refreshUsers" />
               <div class="divider"></div>
@@ -31,8 +38,8 @@
               <GroupList :groups="groups" :loading="loadingGroups" :groupUnreadCounts="groupUnreadCounts" :selectedGroup="selectedGroup" @select="selectGroup" @refresh="refreshGroups" />
             </template>
           </div>
-        </div>
-        <div class="main-chat">
+        </aside>
+        <main class="message-stage">
           <template v-if="currentUser && (selectedUser || selectedGroup)">
             <ChatWindow 
               ref="chatWindow"
@@ -51,15 +58,15 @@
                   <button class="icon-btn" type="button" title="Emoji" aria-label="Emoji" @click="toggleEmojiPicker">
                     <Icon name="smile" :size="18" />
                   </button>
-                  <button class="icon-btn" type="button" title="Adjuntar" aria-label="Adjuntar" @click="triggerAttach">
+                  <button class="icon-btn" type="button" title="Attach" aria-label="Attach" @click="triggerAttach">
                     <Icon name="paperclip" :size="18" />
                   </button>
                   <input ref="fileInput" type="file" style="display:none" @change="handleFileSelected" />
                 </div>
-                <input ref="composerInput" v-model="inputMsg" @keyup.enter="send" placeholder="Escribe un mensaje..." />
-                <button @click="send" class="send-btn" aria-label="Enviar">
+                <input ref="composerInput" v-model="inputMsg" @keyup.enter="send" placeholder="Type a message..." />
+                <button @click="send" class="send-btn" aria-label="Send">
                   <Icon name="send" :size="18" />
-                  <span class="send-label">Enviar</span>
+                  <span class="send-label">Send</span>
                 </button>
               </div>
               <div v-if="showEmojiPicker" class="emoji-picker">
@@ -69,20 +76,20 @@
           </template>
           <template v-else>
             <div class="empty-chat" aria-live="polite">
-              <div class="empty-card" role="region" aria-label="Selecciona un chat">
-                <div class="empty-hero" aria-hidden="true">
+              <div class="empty-chat-panel" role="region" aria-label="Select a chat">
+                <div class="empty-chat-mark" aria-hidden="true">
                   <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v7A3.5 3.5 0 0 1 16.5 16H13l-3.5 3.5c-.6.6-1.5.18-1.5-.7V16H7.5A3.5 3.5 0 0 1 4 12.5v-7Z" fill="currentColor"/>
                   </svg>
                 </div>
-                <div class="empty-title">Selecciona un chat o un grupo</div>
-                <div class="empty-sub">Usa el panel de la izquierda para comenzar a conversar.</div>
+                <div class="empty-chat-title">Pick a chat</div>
+                <div class="empty-chat-text">Unread is waiting on the left.</div>
               </div>
             </div>
           </template>
-        </div>
+        </main>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
@@ -264,9 +271,9 @@ export default {
     
     showNotification(message) {
       if ('Notification' in window && Notification.permission === 'granted') {
-        let title = `Nuevo mensaje de ${message.sender.username}`
+        let title = `New message from ${message.sender.username}`
         if (message.group) {
-          title = `${message.sender.username} en ${message.group.name}`
+          title = `${message.sender.username} in ${message.group.name}`
         }
         new Notification(title, {
           body: message.content,
@@ -369,12 +376,12 @@ export default {
         try {
           const { isConnected } = await import('../services/websocket.js')
           if (!isConnected || !isConnected()) {
-            this.showToast('Conexión perdida. No se pudo enviar', 'error')
+            this.showToast('Connection lost. Could not send', 'error')
             return
           }
         } catch (e) {
           // Si falla la detección, continuar pero avisar
-          this.showToast('Enviando…', 'info')
+          this.showToast('Sending…', 'info')
         }
 
         if (this.chatType === 'user' && this.selectedUser) {
@@ -387,7 +394,7 @@ export default {
           }
           // Enviar via STOMP; la UI se actualiza solo cuando el servidor hace eco
           sendMessage('/app/chat/single', message)
-          this.showToast('Mensaje enviado', 'success')
+          this.showToast('Message sent', 'success')
           // Actualizar hint de último mensaje en la lista
           this.lastMessageMap[this.selectedUser.id] = { 
             content, 
@@ -405,7 +412,7 @@ export default {
           }
           // Enviar via STOMP; no hacer inserción optimista
           sendMessage('/app/chat/group', message)
-          this.showToast('Mensaje enviado al grupo', 'success')
+          this.showToast('Sent to group', 'success')
         }
         this.inputMsg = ''
       }
@@ -447,7 +454,7 @@ export default {
         evt.target.value = ''
       } catch (err) {
         console.error('Error al enviar adjunto:', err)
-        this.showToast('Error al enviar adjunto', 'error')
+        this.showToast('Failed to send attachment', 'error')
       }
     },
     subscribeToGroupChannel(groupId) {
@@ -602,11 +609,11 @@ export default {
               disconnectWebSocket()
               this.wsConnected = false
               const reason = msg && (msg.reason || msg.detail || msg.message)
-              let text = 'Has sido desconectado por un Super Admin.'
+              let text = 'You were disconnected by an admin.'
               if (reason === 'password_changed') {
-                text = 'Tu contraseña ha sido actualizada por un Super Admin. Has sido desconectado. Inicia sesión de nuevo.'
+                text = 'Your password was updated by an admin. Please sign in again.'
               } else if (reason === 'account_disabled') {
-                text = 'Tu cuenta ha sido deshabilitada por un Super Admin. La conexión se ha cerrado.'
+                text = 'Your account was disabled by an admin.'
               }
               alert(text)
               // Cerrar sesión y redirigir al login
@@ -860,9 +867,9 @@ body {
   align-items: center;
   gap: 16px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #faf8f5 100%);
   border-bottom: 1px solid transparent;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.04);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.04);
   position: relative;
 }
 .topbar::after {
@@ -877,7 +884,7 @@ body {
   font-size: 24px;
   font-weight: 800;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #1e293b 0%, var(--brand-gradient-start) 100%);
+  background: linear-gradient(135deg, #1c1917 0%, var(--brand-gradient-start) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -890,12 +897,12 @@ body {
   background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   margin-right: 12px;
   vertical-align: middle;
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.12);
-  animation: topbarDot 2s ease-in-out infinite;
+  box-shadow: 0 0 0 3px rgba(15,118,110,0.12);
+  animation: topbarDot 2s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
 }
 @keyframes topbarDot {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(79,70,229,0.12); }
-  50% { box-shadow: 0 0 0 6px rgba(79,70,229,0.06); }
+  0%, 100% { box-shadow: 0 0 0 3px rgba(15,118,110,0.12); }
+  50% { box-shadow: 0 0 0 6px rgba(15,118,110,0.06); }
 }
 .topbar-meta { color: var(--text-muted); font-weight: 600; margin-left: 12px; }
 .left { display: flex; align-items: center; gap: 12px; }
@@ -929,7 +936,7 @@ body {
 
 .sidebar {
   width: 290px;
-  background: linear-gradient(180deg, #fafbff 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #faf8f5 0%, #ffffff 100%);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -962,8 +969,8 @@ body {
 }
 
 .brand-text { display: flex; flex-direction: column; line-height: 1; }
-.brand-name { font-weight: 700; color: #334155; font-size: 16px; }
-.brand-sub { color: #94a3b8; font-size: 12px; }
+.brand-name { font-weight: 700; color: #292524; font-size: 16px; }
+.brand-sub { color: #a8a29e; font-size: 12px; }
 
 .sidebar-user {
   display: flex;
@@ -971,7 +978,7 @@ body {
   gap: 12px;
   padding: 16px 20px;
   background: linear-gradient(180deg, var(--surface-alt) 0%, var(--surface) 100%);
-  color: #334155;
+  color: #292524;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.2px;
@@ -985,21 +992,21 @@ body {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #c7d2fe;
-  border: 2px solid #eef2ff;
+  background: #a7f3d0;
+  border: 2px solid #f0fdf4;
 }
 
-.sidebar-username { color: #334155; font-weight: 600; text-shadow: none; }
-.sidebar-self { color: #64748b; font-size: 12px; margin-left: 4px; font-weight: 500; }
+.sidebar-username { color: #292524; font-weight: 600; text-shadow: none; }
+.sidebar-self { color: #57534e; font-size: 12px; margin-left: 4px; font-weight: 500; }
 
 .sidebar-username {
-  color: #334155;
+  color: #292524;
   font-weight: 600;
   text-shadow: none;
 }
 
 .sidebar-self {
-  color: #64748b;
+  color: #57534e;
   font-size: 12px;
   margin-left: 4px;
   font-weight: 500;
@@ -1018,7 +1025,7 @@ body {
 .chats-tabs {
   display: flex;
   gap: 4px;
-  background: linear-gradient(135deg, rgba(79,70,229,0.03), rgba(6,182,212,0.02));
+  background: linear-gradient(135deg, rgba(15,118,110,0.03), rgba(6,182,212,0.02));
   padding: 4px;
   border-radius: 12px;
   width: 100%;
@@ -1028,13 +1035,13 @@ body {
   text-align: center;
   background: transparent;
   border: none;
-  color: #94a3b8;
+  color: #a8a29e;
   font-weight: 600;
   font-size: 13px;
   padding: 8px 10px;
   border-radius: 9px;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
   position: relative;
 }
 .tab:hover { color: var(--brand-gradient-start); background: rgba(255,255,255,0.7); }
@@ -1042,7 +1049,7 @@ body {
   color: #fff;
   background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   font-weight: 700;
-  box-shadow: 0 2px 10px rgba(79,70,229,0.25);
+  box-shadow: 0 2px 10px rgba(15,118,110,0.25);
 }
 
 .chats-card {
@@ -1056,7 +1063,7 @@ body {
 .divider {
   height: 1px;
   margin: 4px 20px;
-  background: linear-gradient(90deg, transparent, rgba(79,70,229,0.1), transparent);
+  background: linear-gradient(90deg, transparent, rgba(15,118,110,0.1), transparent);
   position: relative;
 }
 .divider::before {
@@ -1068,7 +1075,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(79,70,229,0.12);
+  background: rgba(15,118,110,0.12);
 }
 
 .main-chat {
@@ -1077,9 +1084,9 @@ body {
   flex-direction: column;
   padding: 20px;
   background:
-    radial-gradient(ellipse at 30% 20%, rgba(79,70,229,0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 30% 20%, rgba(15,118,110,0.02) 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, rgba(6,182,212,0.02) 0%, transparent 50%),
-    linear-gradient(180deg, #fafbff 0%, #f8fafc 100%);
+    linear-gradient(180deg, #faf8f5 0%, #faf8f5 100%);
   position: relative;
   min-height: 0;
 }
@@ -1099,15 +1106,15 @@ body {
   gap: 12px;
   margin-top: 20px;
   padding: 16px 20px;
-  background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
+  background: linear-gradient(145deg, #ffffff 0%, #faf8f5 100%);
   border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(79,70,229,0.06), 0 1px 3px rgba(0,0,0,0.03);
-  border: 1px solid rgba(79,70,229,0.06);
+  box-shadow: 0 4px 16px rgba(15,118,110,0.06), 0 1px 3px rgba(0,0,0,0.03);
+  border: 1px solid rgba(15,118,110,0.06);
   transition: box-shadow 0.3s ease;
 }
 
 .chat-input-area:focus-within {
-  box-shadow: 0 4px 20px rgba(79,70,229,0.1), 0 0 0 2px rgba(79,70,229,0.04);
+  box-shadow: 0 4px 20px rgba(15,118,110,0.1), 0 0 0 2px rgba(15,118,110,0.04);
 }
 
 
@@ -1127,7 +1134,7 @@ body {
   outline: none;
   border-color: var(--brand-gradient-start);
   box-shadow: 
-    0 0 0 3px rgba(102, 126, 234, 0.1),
+    0 0 0 3px rgba(15,118,110, 0.1),
     inset 0 2px 4px rgba(0,0,0,0.02);
   transform: translateY(-1px);
 }
@@ -1142,7 +1149,7 @@ body {
   font-weight: 600;
   font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.25);
   position: relative;
   overflow: hidden;
 }
@@ -1162,7 +1169,7 @@ body {
 
 .chat-input-area button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(79,70,229,0.35);
+  box-shadow: 0 8px 24px rgba(15,118,110,0.35);
 }
 
 .chat-input-area button:hover::before {
@@ -1172,7 +1179,7 @@ body {
 .chat-input-area button:active {
   transform: translateY(0);
   box-shadow: 
-    0 2px 8px rgba(102, 126, 234, 0.3),
+    0 2px 8px rgba(15,118,110, 0.3),
     0 1px 2px rgba(0,0,0,0.1);
 }
 
@@ -1182,22 +1189,22 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: #64748b;
+  color: #57534e;
   padding: 24px;
-  background: radial-gradient(ellipse at center, rgba(79,70,229,0.03) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center, rgba(15,118,110,0.03) 0%, transparent 70%);
 }
 .empty-card {
   position: relative;
   width: 520px;
   max-width: 92%;
   border-radius: 24px;
-  background: linear-gradient(180deg, #ffffff 0%, #fafbff 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #faf8f5 100%);
   box-shadow:
-    0 20px 50px rgba(79,70,229,0.08),
+    0 20px 50px rgba(15,118,110,0.08),
     0 4px 12px rgba(0,0,0,0.03),
     inset 0 1px 0 rgba(255,255,255,0.8);
   padding: 40px 32px 36px;
-  border: 1px solid rgba(79,70,229,0.08);
+  border: 1px solid rgba(15,118,110,0.08);
   overflow: hidden;
 }
 .empty-card::before,
@@ -1214,7 +1221,7 @@ body {
   left: -50px;
   top: -50px;
   background: radial-gradient(closest-side, var(--brand-gradient-start), transparent);
-  animation: emptyGlow1 6s ease-in-out infinite;
+  animation: emptyGlow1 6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
 }
 .empty-card::after {
   width: 260px;
@@ -1222,7 +1229,7 @@ body {
   right: -70px;
   bottom: -70px;
   background: radial-gradient(closest-side, var(--brand-gradient-end), transparent);
-  animation: emptyGlow2 6s ease-in-out infinite 1s;
+  animation: emptyGlow2 6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite 1s;
 }
 @keyframes emptyGlow1 {
   0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.25; }
@@ -1243,9 +1250,9 @@ body {
   color: #fff;
   background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   box-shadow:
-    0 12px 32px rgba(79,70,229,0.3),
+    0 12px 32px rgba(15,118,110,0.3),
     inset 0 1px 0 rgba(255,255,255,0.2);
-  animation: float 3.6s ease-in-out infinite;
+  animation: float 3.6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
   position: relative;
 }
 
@@ -1254,8 +1261,8 @@ body {
   position: absolute;
   inset: -8px;
   border-radius: 34px;
-  border: 2px solid rgba(79,70,229,0.15);
-  animation: heroRing 3s ease-in-out infinite;
+  border: 2px solid rgba(15,118,110,0.15);
+  animation: heroRing 3s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
 }
 
 .empty-hero::after {
@@ -1263,7 +1270,7 @@ body {
   position: absolute;
   inset: -18px;
   border-radius: 40px;
-  border: 1.5px solid rgba(79,70,229,0.08);
+  border: 1.5px solid rgba(15,118,110,0.08);
   animation: heroRing 3s ease-in-out infinite 0.5s;
 }
 
@@ -1274,7 +1281,7 @@ body {
 
 .empty-title {
   font-weight: 800;
-  color: #1e293b;
+  color: #1c1917;
   font-size: 20px;
   letter-spacing: -0.3px;
   position: relative;
@@ -1283,7 +1290,7 @@ body {
 
 .empty-sub {
   font-size: 14px;
-  color: #94a3b8;
+  color: #a8a29e;
   margin-top: 8px;
   line-height: 1.5;
   position: relative;
@@ -1305,14 +1312,14 @@ body {
   height: 36px;
   border-radius: 10px;
   border: none;
-  background: #eef2f7;
-  color: #334155;
+  background: #f5f0ea;
+  color: #292524;
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.7);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-.icon-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
+.icon-btn:hover { background: #e7e0d7; transform: translateY(-1px); }
 .icon-btn:active { transform: translateY(0); }
 
 .image-loading { filter: blur(6px); transform: scale(1.02); }
@@ -1429,7 +1436,7 @@ body {
   margin-top: 8px;
   padding: 10px;
   background: #fff;
-  border: 1px solid rgba(79,70,229,0.08);
+  border: 1px solid rgba(15,118,110,0.08);
   border-radius: 14px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
   display: flex;
@@ -1445,9 +1452,9 @@ body {
   background: transparent;
   cursor: pointer;
   font-size: 18px;
-  transition: all 0.15s ease;
+  transition: all 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.emoji-btn:hover { background: linear-gradient(135deg, rgba(79,70,229,0.06), rgba(6,182,212,0.06)); transform: scale(1.2); }
+.emoji-btn:hover { background: linear-gradient(135deg, rgba(15,118,110,0.06), rgba(6,182,212,0.06)); transform: scale(1.2); }
 
   .toast {
     position: fixed;
@@ -1469,4 +1476,366 @@ body {
   .toast-success { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #065f46; border: 1px solid rgba(16,185,129,0.3); }
   .toast-error { background: linear-gradient(135deg, #fef2f2, #fee2e2); color: #7f1d1d; border: 1px solid rgba(239,68,68,0.3); }
   .toast-info { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e3a8a; border: 1px solid rgba(59,130,246,0.3); }
+
+  .chat-page {
+    width: auto;
+    height: auto;
+    overflow: visible;
+    background:
+      radial-gradient(circle at 14% 18%, rgba(15, 118, 110, 0.06), transparent 30%),
+      radial-gradient(circle at 86% 82%, rgba(217, 119, 6, 0.06), transparent 24%),
+      linear-gradient(145deg, #f8f4ee 0%, #fcfbf8 54%, #f4eee6 100%);
+  }
+
+  .chat-shell {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 22px;
+  }
+
+  .chat-page-header {
+    margin-bottom: 18px;
+  }
+
+  .chat-page-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .chat-page-kicker {
+    margin: 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #0f766e;
+  }
+
+  .chat-page-title {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.05em;
+    color: #1c1917;
+  }
+
+  .chat-page-subtitle {
+    margin: 0;
+    color: #6b6258;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .chat-workbench {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .conversation-rail {
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, rgba(255,255,255,0.88) 0%, rgba(249,245,239,0.96) 100%);
+    border: 1px solid rgba(120, 104, 85, 0.12);
+    box-shadow: 0 14px 34px rgba(28, 18, 10, 0.06);
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
+  .rail-header {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid rgba(120, 104, 85, 0.08);
+  }
+
+  .rail-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .rail-title {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: #1f1a16;
+  }
+
+  .rail-subtitle {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #7a7065;
+    font-weight: 600;
+  }
+
+  .chats-tabs {
+    gap: 6px;
+    padding: 4px;
+    border-radius: 14px;
+    background: rgba(15, 118, 110, 0.04);
+  }
+
+  .tab {
+    border-radius: 10px;
+    color: #7a7065;
+    font-weight: 700;
+    transition: transform 160ms cubic-bezier(0.22, 0.61, 0.36, 1), background-color 160ms cubic-bezier(0.22, 0.61, 0.36, 1), color 160ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 160ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .tab:hover {
+    color: #0f766e;
+    background: rgba(255,255,255,0.76);
+  }
+
+  .tab.active {
+    background: linear-gradient(135deg, #0f766e, #d97706);
+    box-shadow: 0 8px 18px rgba(15, 118, 110, 0.22);
+  }
+
+  .rail-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 10px 0 12px;
+  }
+
+  .divider {
+    margin: 8px 16px 10px;
+    background: linear-gradient(90deg, transparent, rgba(120, 104, 85, 0.16), transparent);
+  }
+
+  .divider::before {
+    content: none;
+  }
+
+  .message-stage {
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chat-input-area {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    margin-top: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .chat-input-area input {
+    width: 100%;
+    border: 1px solid rgba(120, 104, 85, 0.14);
+    background: rgba(255,255,255,0.98);
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-size: 14px;
+    color: #1f1a16;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    transition: border-color 180ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .chat-input-area input:focus {
+    outline: none;
+    border-color: rgba(15, 118, 110, 0.34);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+    transform: none;
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: #f5eee6;
+    color: #574b41;
+    box-shadow: none;
+  }
+
+  .icon-btn:hover {
+    background: #eadfd4;
+    color: #1f1a16;
+  }
+
+  .send-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0f766e, #d97706);
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(15, 118, 110, 0.2);
+    transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .send-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 26px rgba(15, 118, 110, 0.26);
+  }
+
+  .send-label {
+    white-space: nowrap;
+  }
+
+  .emoji-picker {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.94);
+    border: 1px solid rgba(120, 104, 85, 0.1);
+    box-shadow: 0 14px 24px rgba(28, 18, 10, 0.08);
+    animation: none;
+  }
+
+  .emoji-btn:hover {
+    background: rgba(15, 118, 110, 0.06);
+  }
+
+  .empty-chat {
+    min-height: 0;
+    background: transparent;
+  }
+
+  .empty-chat-panel {
+    width: min(440px, 100%);
+    padding: 32px 28px;
+    border-radius: 26px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(247,242,235,0.92));
+    border: 1px solid rgba(120, 104, 85, 0.1);
+    text-align: center;
+    box-shadow: 0 16px 42px rgba(28, 18, 10, 0.06);
+  }
+
+  .empty-chat-mark {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 16px;
+    border-radius: 24px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    background: linear-gradient(135deg, #0f766e, #d97706);
+    box-shadow: 0 12px 30px rgba(15, 118, 110, 0.2);
+  }
+
+  .empty-chat-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1f1a16;
+  }
+
+  .empty-chat-text {
+    margin-top: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #6b6258;
+    font-weight: 600;
+  }
+
+  .toast {
+    top: 18px;
+    right: 18px;
+    box-shadow: 0 12px 24px rgba(28, 18, 10, 0.12);
+    font-weight: 800;
+    font-size: 13px;
+    animation: toastSlide 220ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .toast-info {
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
+    color: #9a3412;
+    border: 1px solid rgba(234,88,12,0.2);
+  }
+
+  @media (max-width: 1180px) {
+    .chat-workbench {
+      grid-template-columns: 290px minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .chat-shell {
+      padding: 18px;
+    }
+
+    .chat-workbench {
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 14px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .chat-page {
+      flex-direction: row;
+    }
+
+    .chat-shell {
+      padding: 14px;
+    }
+
+    .chat-page-title {
+      font-size: 26px;
+    }
+
+    .chat-workbench {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .conversation-rail {
+      max-height: 250px;
+    }
+
+    .chat-input-area {
+      grid-template-columns: auto minmax(0, 1fr);
+      padding: 0;
+    }
+
+    .send-btn {
+      grid-column: 1 / -1;
+      justify-content: center;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .chat-shell {
+      padding: 12px;
+    }
+
+    .chat-page-kicker {
+      font-size: 10px;
+    }
+
+    .chat-page-title {
+      font-size: 23px;
+    }
+
+    .conversation-rail {
+      max-height: 220px;
+      border-radius: 22px;
+    }
+
+    .emoji-picker {
+      gap: 4px;
+    }
+
+    .emoji-btn {
+      font-size: 17px;
+      padding: 5px 7px;
+    }
+  }
 </style>

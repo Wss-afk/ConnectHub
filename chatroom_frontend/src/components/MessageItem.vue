@@ -5,7 +5,7 @@
       :class="isMine ? 'mine' : ''"
       :title="senderName"
       role="img"
-      :aria-label="'Avatar de ' + (senderName || 'usuario')"
+      :aria-label="'Avatar of ' + (senderName || 'user')"
     >
       <img v-if="senderAvatarUrl" :src="senderAvatarUrl" alt="avatar" class="avatar-img" />
       <span v-else>{{ senderInitial }}</span>
@@ -18,7 +18,7 @@
             <img
               :src="message.fileUrl"
               :srcset="message.fileUrl + ' 1x, ' + message.fileUrl + ' 2x'"
-              alt="imagen adjunta"
+              alt="attached image"
               class="attachment-image"
               :class="imageLoaded ? '' : 'image-loading'"
               loading="lazy"
@@ -31,7 +31,7 @@
         <template v-else-if="message.type === 'file' && message.fileUrl">
           <a :href="message.fileUrl" target="_blank" rel="noopener noreferrer" class="attachment-file">
             <Icon name="paperclip" :size="18" />
-            <span class="file-label">{{ message.content || 'Archivo' }}</span>
+            <span class="file-label">{{ message.content || 'File' }}</span>
           </a>
         </template>
         <template v-else>
@@ -102,9 +102,9 @@ export default {
     deliveryStatus() {
       const s = (this.message && this.message.status) || ''
       // soporta estados: 'sent' | 'delivered' | 'read'
-      if (s === 'read') return { icon: '✔✔', label: 'Visto' }
-      if (s === 'delivered') return { icon: '✔✔', label: 'Entregado' }
-      if (s === 'sent') return { icon: '✔', label: 'Enviado' }
+      if (s === 'read') return { icon: '✔✔', label: 'Seen' }
+      if (s === 'delivered') return { icon: '✔✔', label: 'Delivered' }
+      if (s === 'sent') return { icon: '✔', label: 'Sent' }
       return null
     },
     highlightedContent() {
@@ -154,17 +154,17 @@ export default {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-  color: #4f46e5;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #0f766e;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.12);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.12);
   flex-shrink: 0;
   overflow: hidden;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .avatar:hover {
@@ -174,7 +174,7 @@ export default {
 .avatar.mine {
   background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   color: #fff;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.25);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.25);
 }
 
 .avatar-img {
@@ -191,9 +191,9 @@ export default {
   display: flex;
   flex-direction: column;
   word-wrap: break-word;
-  animation: messageSlideIn 0.25s ease-out;
+  animation: messageSlideIn 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
   border: 1px solid transparent;
 }
 
@@ -212,17 +212,17 @@ export default {
   color: #fff;
   border-bottom-right-radius: 4px;
   margin-right: 4px;
-  box-shadow: 0 2px 12px rgba(79,70,229,0.2);
+  box-shadow: 0 2px 12px rgba(15,118,110,0.2);
 }
 
 .message-item.mine:hover {
-  box-shadow: 0 4px 18px rgba(79,70,229,0.3);
+  box-shadow: 0 4px 18px rgba(15,118,110,0.3);
 }
 
 .message-item:not(.mine) {
   background: var(--color-surface);
   color: var(--text-primary);
-  border-color: rgba(226,232,240,0.8);
+  border-color: rgba(231,224,215,0.8);
   border-bottom-left-radius: 4px;
   margin-left: 4px;
 }
@@ -283,7 +283,7 @@ export default {
   display: block;
   cursor: zoom-in;
   margin-bottom: 4px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
@@ -301,7 +301,7 @@ export default {
   text-decoration: none;
   color: inherit;
   font-weight: 500;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
   border: 1px solid rgba(0,0,0,0.04);
 }
 .message-item.mine .attachment-file {
@@ -362,6 +362,125 @@ export default {
   }
   .actions {
     display: none !important;
+  }
+}
+
+.message-row {
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-end;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  border: 1px solid rgba(126, 107, 90, 0.16);
+  box-shadow: 0 10px 24px rgba(87, 61, 43, 0.08);
+}
+
+.message-item {
+  padding: 12px 14px 10px;
+  border-radius: 18px;
+  max-width: min(72%, 620px);
+  box-shadow: 0 14px 28px rgba(74, 54, 39, 0.08);
+}
+
+.message-item:hover {
+  box-shadow: 0 18px 34px rgba(74, 54, 39, 0.1);
+  transform: translateY(-1px);
+}
+
+.message-item.mine {
+  background: linear-gradient(145deg, #0f766e 0%, #115e59 100%);
+  box-shadow: 0 16px 32px rgba(15, 118, 110, 0.2);
+}
+
+.message-item.mine:hover {
+  box-shadow: 0 18px 38px rgba(15, 118, 110, 0.24);
+}
+
+.message-item:not(.mine) {
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.98) 0%, rgba(248, 243, 235, 0.96) 100%);
+  border-color: rgba(214, 201, 186, 0.9);
+}
+
+.sender {
+  margin-bottom: 5px;
+  color: #8b5e3c;
+}
+
+.content {
+  line-height: 1.6;
+}
+
+.caption {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+.timestamp {
+  margin-top: 6px;
+  font-size: 11px;
+  opacity: 0.58;
+}
+
+.message-item:hover .timestamp {
+  opacity: 0.76;
+}
+
+.attachment-image {
+  border-radius: 14px;
+  margin-bottom: 2px;
+  box-shadow: 0 14px 28px rgba(56, 41, 30, 0.12);
+}
+
+.attachment-file {
+  padding: 11px 13px;
+  gap: 9px;
+  border-radius: 12px;
+  border-color: rgba(167, 145, 122, 0.18);
+  background: rgba(123, 97, 67, 0.06);
+}
+
+.message-item.mine .attachment-file {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.file-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.message-row.continuation {
+  margin-top: -2px;
+  margin-bottom: 8px;
+}
+
+.message-row.continuation .message-item {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .message-row {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .message-item {
+    max-width: 88%;
+    padding: 11px 12px 9px;
   }
 }
 </style>

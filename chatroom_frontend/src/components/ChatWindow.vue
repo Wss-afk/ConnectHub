@@ -1,27 +1,27 @@
 <template>
   <div class="chat-window">
     <div class="chat-topbar" v-if="chatUser && chatType === 'user'">
-      <div class="left">
+      <div class="chat-context">
         <div
-          class="avatar"
+          class="chat-avatar"
           :title="chatUser.username"
           role="img"
-          :aria-label="'Avatar de ' + ((chatUser && (chatUser.username || chatUser.name)) || 'usuario')"
+          :aria-label="'Avatar of ' + ((chatUser && (chatUser.username || chatUser.name)) || 'user')"
         >
           <img v-if="chatUser && chatUser.avatarUrl" :src="chatUser.avatarUrl" alt="avatar" class="avatar-img" />
           <span v-else>{{ userInitial }}</span>
         </div>
-        <div class="meta">
-          <div class="name">{{ chatUser.username }}</div>
-          <div class="sub">{{ chatUser.email || chatUser.userEmail || 'Conversación privada' }}</div>
+        <div class="chat-meta">
+          <div class="chat-name">{{ chatUser.username }}</div>
+          <div class="chat-sub">{{ chatUser.email || chatUser.userEmail || 'Private chat' }}</div>
         </div>
       </div>
-      <div class="actions">
+      <div class="chat-tools">
         <input
           type="text"
-          class="search"
-          placeholder="Filtrar en el chat"
-          aria-label="Buscar"
+          class="chat-search"
+          placeholder="Search this chat"
+          aria-label="Search"
           :value="searchQuery"
           @input="onInputSearch"
           @keyup.enter="$emit('search', localSearch)"
@@ -29,19 +29,19 @@
       </div>
     </div>
     <div class="chat-topbar" v-else-if="chatGroup && chatType === 'group'">
-      <div class="left">
-        <div class="avatar group" :title="chatGroup.name">{{ groupInitial }}</div>
-        <div class="meta">
-          <div class="name">{{ chatGroup.name }}</div>
-          <div class="sub">{{ (chatGroup.users && chatGroup.users.length) ? (chatGroup.users.length + ' miembros') : 'Grupo' }}</div>
+      <div class="chat-context">
+        <div class="chat-avatar group" :title="chatGroup.name">{{ groupInitial }}</div>
+        <div class="chat-meta">
+          <div class="chat-name">{{ chatGroup.name }}</div>
+          <div class="chat-sub">{{ (chatGroup.users && chatGroup.users.length) ? (chatGroup.users.length + ' members') : 'Group' }}</div>
         </div>
       </div>
-      <div class="actions">
+      <div class="chat-tools">
         <input
           type="text"
-          class="search"
-          placeholder="Buscar en el grupo"
-          aria-label="Buscar"
+          class="chat-search"
+          placeholder="Search this group"
+          aria-label="Search"
           :value="searchQuery"
           @input="onInputSearch"
           @keyup.enter="$emit('search', localSearch)"
@@ -49,10 +49,10 @@
       </div>
     </div>
     <div v-if="chatGroup && chatType === 'group'" class="group-members-bar">
-      <span class="members-title">Miembros:</span>
+      <span class="members-title">Members:</span>
       <div class="members-list">
         <span v-for="u in (chatGroup.users || [])" :key="u.id" class="member-chip">{{ u.username }}</span>
-        <span v-if="!chatGroup.users || chatGroup.users.length === 0" class="member-chip empty">Sin miembros</span>
+        <span v-if="!chatGroup.users || chatGroup.users.length === 0" class="member-chip empty">No members</span>
       </div>
     </div>
     <div
@@ -63,7 +63,7 @@
       aria-live="polite"
       aria-relevant="additions"
       aria-atomic="false"
-      aria-label="Mensajes del chat"
+      aria-label="Chat messages"
     >
       <div v-if="loading" class="messages-skeleton">
         <div v-for="n in 6" :key="'skm-'+n" class="sk-msg" :class="n % 2 === 0 ? 'left' : 'right'">
@@ -71,15 +71,15 @@
         </div>
       </div>
       <div v-else-if="(messages && messages.length === 0)" class="messages-empty">
-        <div class="empty-card" role="region" aria-label="No hay mensajes">
+        <div class="empty-card" role="region" aria-label="No messages">
           <div class="empty-hero" aria-hidden="true">
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M4 5.5A3.5 3.5 0 0 1 7.5 2h9A3.5 3.5 0 0 1 20 5.5v7A3.5 3.5 0 0 1 16.5 16H13l-3.5 3.5c-.6.6-1.5.18-1.5-.7V16H7.5A3.5 3.5 0 0 1 4 12.5v-7Z" fill="currentColor"/>
             </svg>
           </div>
-          <div class="empty-title">No hay mensajes</div>
-          <div class="empty-sub">Escribe tu primer mensaje para iniciar la conversación.</div>
-          <button type="button" class="empty-cta" @click="$emit('compose')">Escribir mensaje</button>
+          <div class="empty-title">No messages yet</div>
+          <div class="empty-sub">Send your first message to start the conversation.</div>
+          <button type="button" class="empty-cta" @click="$emit('compose')">Write a message</button>
         </div>
       </div>
       <transition-group v-else name="msg" tag="div" class="messages-list">
@@ -98,9 +98,9 @@
       v-if="!isAtBottom"
       class="scroll-bottom-btn"
       @click="jumpToBottom"
-      aria-label="Ir al último"
+      aria-label="Jump to latest"
     >
-      ↓ Ir al último
+      ↓ Jump to latest
     </button>
 
     <div
@@ -109,7 +109,7 @@
       @click="jumpToBottom"
       aria-live="polite"
     >
-      Nuevos mensajes · {{ unreadCount }}
+      New messages · {{ unreadCount }}
     </div>
 
     <div class="composer-bar">
@@ -271,9 +271,9 @@ export default {
       yesterday.setDate(today.getDate() - 1)
 
       const sameDay = (a,b) => a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate()
-      if (sameDay(d, today)) return 'Hoy'
-      if (sameDay(d, yesterday)) return 'Ayer'
-      return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })
+      if (sameDay(d, today)) return 'Today'
+      if (sameDay(d, yesterday)) return 'Yesterday'
+      return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
     },
     updateAutoScrollState() {
       const el = this.$refs.messagesContainer
@@ -300,12 +300,12 @@ export default {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, #fafbff 0%, #ffffff 100%);
+  background: linear-gradient(180deg, #faf8f5 0%, #ffffff 100%);
   border-radius: 16px;
   padding: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(79,70,229,0.05), 0 1px 3px rgba(0,0,0,0.03);
-  border: 1px solid rgba(79,70,229,0.06);
+  box-shadow: 0 4px 20px rgba(15,118,110,0.05), 0 1px 3px rgba(0,0,0,0.03);
+  border: 1px solid rgba(15,118,110,0.06);
   min-height: 0;
 }
 
@@ -313,20 +313,20 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
-  border: 1px solid rgba(79,70,229,0.06);
+  background: linear-gradient(135deg, #ffffff 0%, #faf8f5 100%);
+  border: 1px solid rgba(15,118,110,0.06);
   border-radius: 14px;
   padding: 12px 16px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.04);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.04);
 }
 .chat-topbar .left { display: flex; align-items: center; gap: 12px; }
-.chat-topbar .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: #4f46e5; display: flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: 0 2px 8px rgba(79,70,229,0.12); }
+.chat-topbar .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #0f766e; display: flex; align-items: center; justify-content: center; font-weight: 700; box-shadow: 0 2px 8px rgba(15,118,110,0.12); }
 .chat-topbar .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .chat-topbar .avatar.group { background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end)); }
 .chat-topbar .meta { display: flex; flex-direction: column; }
-.chat-topbar .name { color: #1e293b; font-weight: 700; font-size: 15px; }
-.chat-topbar .sub { color: #64748b; font-size: 12px; }
+.chat-topbar .name { color: #1c1917; font-weight: 700; font-size: 15px; }
+.chat-topbar .sub { color: #57534e; font-size: 12px; }
 .chat-topbar .actions { display: inline-flex; align-items: center; gap: 10px; }
 .chat-topbar .actions .search {
   height: 32px;
@@ -347,7 +347,7 @@ export default {
   margin-bottom: 12px;
   padding: 10px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+  scrollbar-color: rgba(15, 118, 110, 0.3) transparent;
 }
 
 .messages::-webkit-scrollbar {
@@ -374,34 +374,34 @@ export default {
 .sk-msg { display: flex; }
 .sk-msg.left { justify-content: flex-start; }
 .sk-msg.right { justify-content: flex-end; }
-.sk-bubble { width: 52%; max-width: 420px; height: 18px; border-radius: 16px; background: linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9); animation: shimmer 1.2s infinite; }
+.sk-bubble { width: 52%; max-width: 420px; height: 18px; border-radius: 16px; background: linear-gradient(90deg, #f5f0ea, #e7e0d7, #f5f0ea); animation: shimmer 1.2s infinite; }
 @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
 
 /* Mensajes: empty */
 .messages-empty { display: flex; align-items: center; justify-content: center; min-height: 280px; }
-.empty-card { text-align: center; color: #64748b; }
-.empty-hero { display: inline-flex; align-items: center; justify-content: center; color: #94a3b8; margin-bottom: 8px; }
-.empty-title { font-weight: 800; color: #334155; }
+.empty-card { text-align: center; color: #57534e; }
+.empty-hero { display: inline-flex; align-items: center; justify-content: center; color: #a8a29e; margin-bottom: 8px; }
+.empty-title { font-weight: 800; color: #292524; }
 .empty-sub { font-size: 12px; margin-top: 4px; }
 .empty-cta {
   margin-top: 10px; padding: 8px 16px; border-radius: 10px;
-  border: 1px solid rgba(79,70,229,0.15);
-  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-  color: #4f46e5; font-weight: 700; cursor: pointer;
-  transition: all 0.2s ease;
+  border: 1px solid rgba(15,118,110,0.15);
+  background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+  color: #0f766e; font-weight: 700; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.empty-cta:hover { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,70,229,0.15); }
+.empty-cta:hover { background: linear-gradient(135deg, #d1fae5, #a7f3d0); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,118,110,0.15); }
 
 /* Transiciones GPU-friendly para aparición / desaparición / reordenado */
 .msg-enter-active,
-.msg-leave-active { transition: transform 180ms ease, opacity 180ms ease; }
+.msg-leave-active { transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1), opacity 180ms cubic-bezier(0.22, 0.61, 0.36, 1); }
 .msg-enter-from,
 .msg-leave-to { opacity: 0; transform: translate3d(0, 8px, 0) scale(0.98); will-change: transform, opacity; }
-.msg-move { transition: transform 180ms ease; will-change: transform; }
+.msg-move { transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1); will-change: transform; }
 .msg-leave-active { pointer-events: none; }
 .group-members-bar {
-  background: linear-gradient(135deg, #fafbff 0%, #f5f7ff 100%);
-  border: 1px solid rgba(79,70,229,0.08);
+  background: linear-gradient(135deg, #faf8f5 0%, #f5f0ea 100%);
+  border: 1px solid rgba(15,118,110,0.08);
   border-radius: 12px;
   padding: 10px 14px;
   margin-bottom: 12px;
@@ -429,14 +429,14 @@ export default {
   border-radius: 9999px;
   font-size: 12px;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.2);
-  transition: transform 0.15s ease;
+  box-shadow: 0 2px 8px rgba(15,118,110,0.2);
+  transition: transform 0.15s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .member-chip:hover { transform: scale(1.05); }
 
 .member-chip.empty {
-  background: #e2e8f0;
-  color: #334155;
+  background: #e7e0d7;
+  color: #292524;
 }
 
 /* Controles flotantes */
@@ -452,14 +452,14 @@ export default {
   padding: 8px 16px;
   font-weight: 600;
   font-size: 13px;
-  box-shadow: 0 4px 16px rgba(79,70,229,0.3);
+  box-shadow: 0 4px 16px rgba(15,118,110,0.3);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .scroll-bottom-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 22px rgba(79,70,229,0.4);
+  box-shadow: 0 6px 22px rgba(15,118,110,0.4);
 }
 
 .new-messages-banner {
@@ -475,9 +475,9 @@ export default {
   padding: 7px 16px;
   font-size: 12px;
   font-weight: 700;
-  box-shadow: 0 4px 16px rgba(79,70,229,0.3);
+  box-shadow: 0 4px 16px rgba(15,118,110,0.3);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 .chat-window {
@@ -490,10 +490,222 @@ export default {
   bottom: 0;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
-  border-top: 1px solid rgba(79,70,229,0.06);
+  border-top: 1px solid rgba(15,118,110,0.06);
   border-radius: 12px;
   padding: 8px;
   box-shadow: 0 -2px 12px rgba(0,0,0,0.03);
+}
+
+.chat-window {
+  padding: 18px;
+  border-radius: 28px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(248,243,236,0.92) 100%);
+  border: 1px solid rgba(120, 104, 85, 0.1);
+  box-shadow: 0 18px 42px rgba(28, 18, 10, 0.06);
+}
+
+.chat-topbar {
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(120, 104, 85, 0.08);
+  box-shadow: none;
+}
+
+.chat-context {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.chat-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  color: #0f766e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  box-shadow: 0 8px 18px rgba(15,118,110,0.14);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.chat-avatar.group {
+  background: linear-gradient(135deg, #0f766e, #d97706);
+  color: #fff;
+}
+
+.chat-meta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-name {
+  color: #1c1917;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+}
+
+.chat-sub {
+  color: #6b6258;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.chat-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-search {
+  width: 220px;
+  max-width: 100%;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 104, 85, 0.14);
+  padding: 0 14px;
+  font-size: 13px;
+  background: rgba(255,255,255,0.96);
+  color: #1f1a16;
+}
+
+.chat-search:focus {
+  outline: none;
+  border-color: rgba(15, 118, 110, 0.3);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+}
+
+.group-members-bar {
+  gap: 10px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background: rgba(245, 240, 234, 0.9);
+  border: 1px solid rgba(120, 104, 85, 0.08);
+}
+
+.members-title {
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.member-chip {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: rgba(15,118,110,0.08);
+  color: #115e59;
+  box-shadow: none;
+}
+
+.member-chip:hover {
+  transform: none;
+}
+
+.member-chip.empty {
+  background: rgba(120, 104, 85, 0.12);
+  color: #574b41;
+}
+
+.messages {
+  margin-bottom: 10px;
+  padding: 10px 8px;
+}
+
+.messages-empty {
+  min-height: 240px;
+}
+
+.empty-card {
+  max-width: 320px;
+}
+
+.empty-title {
+  font-size: 16px;
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: #6b6258;
+}
+
+.empty-hero {
+  color: #9a8f84;
+}
+
+.empty-cta {
+  background: rgba(15,118,110,0.08);
+  color: #0f766e;
+  border-color: rgba(15,118,110,0.12);
+  box-shadow: none;
+}
+
+.empty-cta:hover {
+  background: rgba(15,118,110,0.12);
+  box-shadow: none;
+}
+
+.scroll-bottom-btn {
+  right: 10px;
+  bottom: 154px;
+  padding: 8px 14px;
+  background: linear-gradient(135deg, #0f766e, #d97706);
+  box-shadow: 0 10px 22px rgba(15,118,110,0.24);
+}
+
+.new-messages-banner {
+  bottom: 212px;
+  background: linear-gradient(135deg, #0f766e, #d97706);
+}
+
+.composer-bar {
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(120, 104, 85, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 -2px 12px rgba(28,18,10,0.03);
+}
+
+@media (max-width: 768px) {
+  .chat-window {
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  .chat-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .chat-tools {
+    width: 100%;
+  }
+
+  .chat-search {
+    width: 100%;
+  }
+
+  .scroll-bottom-btn {
+    bottom: 170px;
+  }
+
+  .new-messages-banner {
+    bottom: 228px;
+  }
 }
 
 </style>

@@ -7,13 +7,13 @@
           <h1 class="title">{{ monthLabel }}</h1>
         </div>
         <div class="controls gap8-2">
-          <button class="nav-btn" @click="prevMonth" aria-label="Mes anterior">
+          <button class="nav-btn" @click="prevMonth" aria-label="Previous month">
             <Icon name="chevron-left" :size="18" />
           </button>
-          <button class="nav-btn" @click="nextMonth" aria-label="Mes siguiente">
+          <button class="nav-btn" @click="nextMonth" aria-label="Next month">
             <Icon name="chevron-right" :size="18" />
           </button>
-          <button class="primary" @click="goToday">Hoy</button>
+          <button class="primary" @click="goToday">Today</button>
         </div>
       </header>
 
@@ -54,10 +54,10 @@
           </div>
 
           <div class="month-agenda-section">
-            <h2 class="section-title">Agenda de {{ monthLabel }}</h2>
+            <h2 class="section-title">Agenda for {{ monthLabel }}</h2>
             <div class="agenda-list">
               <div v-if="monthEvents.length === 0" class="agenda-empty">
-                No hay eventos programados para este mes.
+                No events scheduled this month.
               </div>
               <div v-else v-for="ev in monthEvents" :key="'m-'+ev.id" :class="['agenda-item', isPastEvent(ev) && 'is-past']" @click="selectDayAndEvent(ev)">
                 <div class="agenda-date">
@@ -68,7 +68,7 @@
                   <div class="agenda-marker" :style="{ backgroundColor: ev.color }"></div>
                   <div class="agenda-details">
                     <div class="agenda-title">{{ ev.title }}</div>
-                    <div class="agenda-time">{{ ev.time || 'Todo el día' }}</div>
+                    <div class="agenda-time">{{ ev.time || 'All day' }}</div>
                   </div>
                 </div>
                 <div class="agenda-meta">
@@ -84,8 +84,8 @@
         <aside class="sidebar">
           <div class="panel">
             <div class="panel-header-row" style="display: flex; justify-content: space-between; align-items: center;">
-              <h2 class="panel-title">{{ selectedDay ? `Eventos: ${selectedDayLabel}` : 'Selecciona un día' }}</h2>
-              <button class="primary-sm icon-only" @click="openCreateForm" title="Nuevo evento" v-if="selectedDay">
+              <h2 class="panel-title">{{ selectedDay ? `Events: ${selectedDayLabel}` : 'Pick a day' }}</h2>
+              <button class="primary-sm icon-only" @click="openCreateForm" title="New event" v-if="selectedDay">
                 <Icon name="plus" :size="16" />
               </button>
             </div>
@@ -112,9 +112,9 @@
                     <div class="event-title">{{ ev.title }}</div>
                     <div class="event-time">{{ ev.time }}</div>
                     <div class="event-meta">
-                      <span v-if="ev.createdById">Creador: {{ usernameById(ev.createdById) }}</span>
+                      <span v-if="ev.createdById">Creator: {{ usernameById(ev.createdById) }}</span>
                       <span v-if="(ev.responsibleIds && ev.responsibleIds.length) || (ev.assignedToIds && ev.assignedToIds.length)" style="margin-left: 8px">
-                        Responsables: {{ ((ev.responsibleIds || ev.assignedToIds) || []).map(id => usernameById(id)).join(', ') }}
+                        Assignees: {{ ((ev.responsibleIds || ev.assignedToIds) || []).map(id => usernameById(id)).join(', ') }}
                       </span>
                     </div>
                     <div class="event-desc" v-if="ev.description">{{ ev.description }}</div>
@@ -125,9 +125,9 @@
                   <div class="empty-illustration">
                     <Icon name="calendar" :size="48" />
                   </div>
-                  <h3 class="empty-title">{{ selectedDay ? 'Sin planes para hoy' : 'Sin eventos este mes' }}</h3>
-                  <p class="empty-desc" v-if="selectedDay">Parece un día tranquilo. ¿Por qué no añades un nuevo evento?</p>
-                  <p class="empty-desc" v-else>No hay eventos programados para este mes.</p>
+                  <h3 class="empty-title">{{ selectedDay ? 'No plans for today' : 'No events this month' }}</h3>
+                  <p class="empty-desc" v-if="selectedDay">Looks like a quiet day. Add an event?</p>
+                  <p class="empty-desc" v-else>No events scheduled this month.</p>
                   <div v-if="selectedDay" style="margin-top: 20px">
                   </div>
                 </li>
@@ -140,18 +140,18 @@
                     <span class="badge" :style="{ background: detailEvent.color }"></span>
                     {{ detailEvent.title }}
                   </div>
-                  <button class="close" title="Cerrar" @click="closeEventDetails">×</button>
+                  <button class="close" title="Close" @click="closeEventDetails">×</button>
                 </div>
                 <div class="detail-body">
-                  <div class="detail-row"><strong>Fecha:</strong> {{ (detailEvent && detailEvent.date) || '—' }}</div>
-                  <div class="detail-row"><strong>Hora:</strong> {{ detailEvent.time || '—' }}</div>
-                  <div class="detail-row"><strong>Descripción:</strong> {{ detailEvent.description || '—' }}</div>
+                  <div class="detail-row"><strong>Date:</strong> {{ (detailEvent && detailEvent.date) || '—' }}</div>
+                  <div class="detail-row"><strong>Time:</strong> {{ detailEvent.time || '—' }}</div>
+                  <div class="detail-row"><strong>Description:</strong> {{ detailEvent.description || '—' }}</div>
                   <div class="detail-row">
-            <strong>Creador:</strong> 
+            <strong>Creator:</strong>
             {{ detailEvent.createdBy ? detailEvent.createdBy.username : (detailEvent.createdById ? usernameById(detailEvent.createdById) : '—') }}
           </div>
           <div class="detail-row">
-            <strong>Responsables:</strong>
+            <strong>Assignees:</strong>
             <template v-if="detailEvent.responsibles && detailEvent.responsibles.length">
               {{ detailEvent.responsibles.map(u => u.username).join(', ') }}
             </template>
@@ -162,8 +162,8 @@
           </div>
                 </div>
                 <div class="detail-actions">
-                  <button class="danger" :disabled="deleting" @click="removeEvent">{{ deleting ? 'Eliminando…' : 'Eliminar' }}</button>
-                  <button class="cancel" :disabled="deleting" @click="closeEventDetails">Cerrar</button>
+                  <button class="danger" :disabled="deleting" @click="removeEvent">{{ deleting ? 'Deleting…' : 'Delete' }}</button>
+                  <button class="cancel" :disabled="deleting" @click="closeEventDetails">Close</button>
                 </div>
                 <div v-if="deleteError" class="form-error">{{ deleteError }}</div>
               </div>
@@ -174,8 +174,8 @@
             <div v-if="createOpen" class="detail-modal" style="z-index: 60;">
               <div class="detail-card create-card">
                 <div class="detail-header">
-                  <div class="detail-title"><Icon name="plus" :size="20" /> Nuevo evento</div>
-                  <button type="button" class="close" title="Cerrar" @click="cancelCreate">×</button>
+                  <div class="detail-title"><Icon name="plus" :size="20" /> New event</div>
+                  <button type="button" class="close" title="Close" @click="cancelCreate">×</button>
                 </div>
                 <div class="detail-body">
                   <div class="form-info-bar">
@@ -191,23 +191,23 @@
 
                   <div class="form-section">
                     <div class="form-row">
-                        <label>Título</label>
+                        <label>Title</label>
                         <div class="input-wrapper">
-                            <input type="text" v-model="newEvent.title" placeholder="Ej. Reunión de equipo" autofocus />
+                            <input type="text" v-model="newEvent.title" placeholder="e.g. Team meeting" autofocus />
                         </div>
                     </div>
                     
                     <div class="form-grid-2">
                          <div class="form-row">
-                            <label>Horario</label>
+                            <label>Time</label>
                             <div class="time-range">
                                 <select v-model="newEvent.startHour">
-                                <option :value="null">Inicio</option>
+                                <option :value="null">Start</option>
                                 <option v-for="h in hours24" :key="'sh-'+h" :value="h">{{ pad2(h) }}:00</option>
                                 </select>
                                 <span class="arrow">→</span>
                                 <select v-model="newEvent.endHour">
-                                <option :value="null">Fin</option>
+                                <option :value="null">End</option>
                                 <option v-for="h in hours24" :key="'eh-'+h" :value="h">{{ pad2(h) }}:00</option>
                                 </select>
                             </div>
@@ -215,18 +215,18 @@
                         <div class="form-row">
                             <label>Color</label>
                             <div class="color-input-wrapper">
-                                <input v-model="newEvent.color" type="color" title="Elige un color" />
+                                <input v-model="newEvent.color" type="color" title="Pick a color" />
                             </div>
                         </div>
                     </div>
 
                     <div class="form-row">
-                        <label>Descripción</label>
-                        <textarea v-model="newEvent.description" placeholder="Añade detalles…"></textarea>
+                        <label>Description</label>
+                        <textarea v-model="newEvent.description" placeholder="Add details…"></textarea>
                     </div>
 
                     <div class="form-row">
-                        <label>Participantes</label>
+                        <label>Participants</label>
                         <div class="users-select-container">
                             <div class="users-list">
                                 <label v-for="u in users" :key="u.id" class="user-option" :class="{checked: newEvent.assignedToIds.includes(u.id)}">
@@ -241,8 +241,8 @@
                   </div>
                 </div>
                 <div class="detail-actions">
-                  <button class="cancel" @click="cancelCreate">Cancelar</button>
-                  <button class="primary" @click="submitCreate">Crear Evento</button>
+                  <button class="cancel" @click="cancelCreate">Cancel</button>
+                  <button class="primary" @click="submitCreate">Create Event</button>
                 </div>
                 <div v-if="createError" class="form-error-banner">
                     <Icon name="alert-circle" :size="16" /> {{ createError }}
@@ -276,10 +276,10 @@ export default {
       selectedDay: now.getDate(),
       events: [],
       loadingEvents: false,
-      weekdays: ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'],
+      weekdays: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
       createOpen: false,
       createError: '',
-      newEvent: { title: '', description: '', time: '', color: '#6366f1', assignedToIds: [], startHour: null, endHour: null },
+      newEvent: { title: '', description: '', time: '', color: '#0f766e', assignedToIds: [], startHour: null, endHour: null },
       users: [],
       detailOpen: false,
       detailEvent: null,
@@ -299,13 +299,13 @@ export default {
       return mondayIndex
     },
     monthLabel() {
-      const s = this.cursor.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+      const s = this.cursor.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
       return s.charAt(0).toUpperCase() + s.slice(1)
     },
     selectedDayLabel() {
       if (!this.selectedDay) return ''
       const d = new Date(this.year, this.month, this.selectedDay)
-      return d.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })
+      return d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })
     },
     hours24() {
       return Array.from({ length: 24 }, (_, i) => i)
@@ -328,7 +328,7 @@ export default {
     getWeekdayShort(dateStr) {
         if (!dateStr) return '';
         const d = new Date(dateStr);
-        return d.toLocaleDateString('es-ES', { weekday: 'short' }).toUpperCase();
+        return d.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
     },
     selectDayAndEvent(ev) {
         if (ev.date) {
@@ -381,28 +381,28 @@ export default {
     openCreateForm() {
       this.createOpen = true
       this.createError = ''
-      if (!this.newEvent.color) this.newEvent.color = '#6366f1'
+      if (!this.newEvent.color) this.newEvent.color = '#0f766e'
     },
     cancelCreate() {
       this.createOpen = false
       this.createError = ''
-      this.newEvent = { title: '', description: '', time: '', color: '#6366f1', assignedToIds: [], startHour: null, endHour: null }
+      this.newEvent = { title: '', description: '', time: '', color: '#0f766e', assignedToIds: [], startHour: null, endHour: null }
     },
     async submitCreate() {
       const d = this.selectedDay || 1
       const title = (this.newEvent.title || '').trim()
-      if (!title) { this.createError = 'El título es obligatorio'; return }
+      if (!title) { this.createError = 'Title is required'; return }
       // Construir la cadena de tiempo a partir de los selects
       let timeStr = null
       const sh = this.newEvent.startHour
       const eh = this.newEvent.endHour
       if (sh != null || eh != null) {
         if (sh == null || eh == null) {
-          this.createError = 'Selecciona hora de inicio y fin';
+          this.createError = 'Pick start and end time';
           return
         }
         if (Number(eh) < Number(sh)) {
-          this.createError = 'La hora de fin no puede ser menor que la de inicio';
+          this.createError = 'End time can\'t be before start';
           return
         }
         timeStr = `${this.pad2(Number(sh))}:00 - ${this.pad2(Number(eh))}:00`
@@ -411,7 +411,7 @@ export default {
         title,
         description: (this.newEvent.description || '').trim() || null,
         time: timeStr,
-        color: this.newEvent.color || '#6366f1',
+        color: this.newEvent.color || '#0f766e',
         date: this.toISO(this.year, this.month, d),
         createdById: this.currentUser?.id || null,
         responsibleIds: Array.isArray(this.newEvent.assignedToIds) ? this.newEvent.assignedToIds : []
@@ -424,7 +424,7 @@ export default {
         }
       } catch (e) {
         // No crear localmente para evitar confusión entre estado local y backend
-        const msg = e?.response?.data?.message || 'No se pudo guardar el evento en el servidor'
+        const msg = e?.response?.data?.message || 'Could not save event'
         this.createError = msg
       }
     },
@@ -472,7 +472,7 @@ export default {
         this.closeEventDetails()
         await this.loadMonth()
       } catch (e) {
-        const msg = e?.response?.data?.message || 'No se pudo eliminar el evento en el servidor'
+        const msg = e?.response?.data?.message || 'Could not delete event'
         this.deleteError = msg
       } finally {
         this.deleting = false
@@ -535,125 +535,125 @@ export default {
 </script>
 
 <style scoped>
-.events-page.light { display: flex; min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #f0f4ff 50%, #f8fafc 100%); color: #1e293b; }
+.events-page.light { display: flex; min-height: 100vh; background: linear-gradient(135deg, #faf8f5 0%, #f0f4ff 50%, #faf8f5 100%); color: #1c1917; }
 .content { flex: 1; padding: 24px 32px; overflow-y: auto; }
 
 /* Transitions */
-.fade-slide-enter-active, .fade-slide-leave-active { transition: all 0.3s ease; }
+.fade-slide-enter-active, .fade-slide-leave-active { transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
 .fade-slide-enter-from { opacity: 0; transform: translateX(10px); }
 .fade-slide-leave-to { opacity: 0; transform: translateX(-10px); }
 
-.list-enter-active, .list-leave-active { transition: all 0.3s ease; }
+.list-enter-active, .list-leave-active { transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
 .list-enter-from, .list-leave-to { opacity: 0; transform: translateX(20px); }
 
 .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-.title { font-size: 28px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+.title { font-size: 28px; font-weight: 800; color: #1c1917; letter-spacing: -0.5px; }
 .controls { display: flex; align-items: center; gap: 12px; }
 .nav-btn {
-  width: 36px; height: 36px; border-radius: 12px; border: 1px solid #e2e8f0;
-  background: #fff; color: #64748b; cursor: pointer; transition: all 0.2s;
+  width: 36px; height: 36px; border-radius: 12px; border: 1px solid #e7e0d7;
+  background: #fff; color: #57534e; cursor: pointer; transition: all 0.2s;
   display: flex; align-items: center; justify-content: center;
 }
-.nav-btn:hover { background: #f1f5f9; color: #0f172a; border-color: #cbd5e1; }
+.nav-btn:hover { background: #f5f0ea; color: #1c1917; border-color: #d6d3d1; }
 .primary {
   padding: 10px 20px; border-radius: 12px; border: none;
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #ea580c 100%);
   color: #fff; font-weight: 600; cursor: pointer;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 14px rgba(15,118,110, 0.3);
   transition: all 0.2s;
   display: flex; align-items: center; justify-content: center;
 }
 .primary.full-width { width: 100%; }
-.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35); }
+.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(15,118,110, 0.35); }
 
 .calendar-wrap { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
 .calendar-column { display: flex; flex-direction: column; gap: 24px; }
 .calendar {
   background: #ffffff; border-radius: 24px; padding: 24px;
-  box-shadow: 0 10px 30px -5px rgba(79,70,229,0.06), 0 4px 6px rgba(0,0,0,0.02);
-  border: 1px solid rgba(79,70,229,0.04);
+  box-shadow: 0 10px 30px -5px rgba(15,118,110,0.06), 0 4px 6px rgba(0,0,0,0.02);
+  border: 1px solid rgba(15,118,110,0.04);
 }
 
 .month-agenda-section {
   background: #ffffff; border-radius: 24px; padding: 24px;
-  box-shadow: 0 10px 30px -5px rgba(79,70,229,0.06);
-  border: 1px solid rgba(79,70,229,0.04);
+  box-shadow: 0 10px 30px -5px rgba(15,118,110,0.06);
+  border: 1px solid rgba(15,118,110,0.04);
 }
-.section-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 20px; }
+.section-title { font-size: 1.2rem; font-weight: 800; color: #1c1917; margin-bottom: 20px; }
 
 .agenda-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-.agenda-empty { color: #94a3b8; font-style: italic; grid-column: 1/-1; text-align: center; padding: 20px; }
+.agenda-empty { color: #a8a29e; font-style: italic; grid-column: 1/-1; text-align: center; padding: 20px; }
 
 .agenda-item {
   display: flex; align-items: center; gap: 16px;
-  background: #fff; border: 1px solid #f1f5f9; border-radius: 16px;
+  background: #fff; border: 1px solid #f5f0ea; border-radius: 16px;
   padding: 16px; cursor: pointer; transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 .agenda-item:hover {
-  transform: translateY(-2px); border-color: rgba(99,102,241,0.2);
-  box-shadow: 0 8px 20px -4px rgba(79,70,229,0.1);
+  transform: translateY(-2px); border-color: rgba(15,118,110,0.2);
+  box-shadow: 0 8px 20px -4px rgba(15,118,110,0.1);
 }
 
 .agenda-date {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  width: 50px; height: 50px; background: #f8fafc; border-radius: 12px;
-  border: 1px solid #e2e8f0; flex-shrink: 0;
+  width: 50px; height: 50px; background: #faf8f5; border-radius: 12px;
+  border: 1px solid #e7e0d7; flex-shrink: 0;
 }
-.agenda-day { font-size: 1.2rem; font-weight: 800; color: #0f172a; line-height: 1; }
-.agenda-weekday { font-size: 0.65rem; font-weight: 700; color: #64748b; margin-top: 2px; }
+.agenda-day { font-size: 1.2rem; font-weight: 800; color: #1c1917; line-height: 1; }
+.agenda-weekday { font-size: 0.65rem; font-weight: 700; color: #57534e; margin-top: 2px; }
 
 .agenda-content { flex: 1; display: flex; align-items: flex-start; gap: 10px; overflow: hidden; }
 .agenda-marker { width: 4px; height: 32px; border-radius: 4px; flex-shrink: 0; margin-top: 4px; }
 .agenda-details { display: flex; flex-direction: column; overflow: hidden; }
-.agenda-title { font-weight: 700; color: #334155; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.agenda-time { font-size: 0.8rem; color: #94a3b8; margin-top: 2px; }
+.agenda-title { font-weight: 700; color: #292524; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agenda-time { font-size: 0.8rem; color: #a8a29e; margin-top: 2px; }
 
 .agenda-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-.agenda-user { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #64748b; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; }
+.agenda-user { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: #57534e; background: #f5f0ea; padding: 4px 8px; border-radius: 6px; }
 
 .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 16px; }
 .wd {
-  padding: 10px; text-align: center; color: #94a3b8; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 10px; text-align: center; color: #a8a29e; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px;
 }
 
 .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
 .day {
-  background: #fff; border: 1px solid #f1f5f9; border-radius: 16px;
+  background: #fff; border: 1px solid #f5f0ea; border-radius: 16px;
   padding: 10px; min-height: 110px; position: relative;
   transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   cursor: pointer; display: flex; flex-direction: column;
   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 .day:hover {
-  border-color: #6366f1; transform: translateY(-4px);
-  box-shadow: 0 12px 28px -10px rgba(99, 102, 241, 0.18);
+  border-color: #0f766e; transform: translateY(-4px);
+  box-shadow: 0 12px 28px -10px rgba(15,118,110, 0.18);
   z-index: 10;
 }
 .day.today {
-  background: linear-gradient(135deg, rgba(99,102,241,0.04), rgba(6,182,212,0.04));
-  border-color: #6366f1;
-  box-shadow: inset 0 0 0 1px #6366f1, 0 4px 12px rgba(99,102,241,0.08);
+  background: linear-gradient(135deg, rgba(15,118,110,0.04), rgba(6,182,212,0.04));
+  border-color: #0f766e;
+  box-shadow: inset 0 0 0 1px #0f766e, 0 4px 12px rgba(15,118,110,0.08);
 }
 .day.today .num {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #0f766e 0%, #ea580c 100%);
   color: white; width: 28px; height: 28px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+  box-shadow: 0 2px 8px rgba(15,118,110,0.35);
 }
 .day.selected {
-  border-color: #6366f1; background: #eef2ff;
-  box-shadow: inset 0 0 0 1px #6366f1;
+  border-color: #0f766e; background: #f0fdf4;
+  box-shadow: inset 0 0 0 1px #0f766e;
 }
 .day.empty { visibility: hidden; pointer-events: none; }
 
 .day-header { display: flex; justify-content: flex-end; margin-bottom: 6px; }
-.num { font-weight: 700; color: #475569; font-size: 0.95rem; transition: color 0.2s; padding: 4px; }
+.num { font-weight: 700; color: #44403c; font-size: 0.95rem; transition: color 0.2s; padding: 4px; }
 
-.event-title { font-weight: 700; color: #1e293b; font-size: 0.95rem; margin-bottom: 2px; }
-.event-time { font-size: 0.8rem; color: #64748b; font-weight: 500; }
-.event-meta { font-size: 0.75rem; color: #94a3b8; margin-top: 4px; }
-.event-desc { font-size: 0.8rem; color: #64748b; margin-top: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.event-title { font-weight: 700; color: #1c1917; font-size: 0.95rem; margin-bottom: 2px; }
+.event-time { font-size: 0.8rem; color: #57534e; font-weight: 500; }
+.event-meta { font-size: 0.75rem; color: #a8a29e; margin-top: 4px; }
+.event-desc { font-size: 0.8rem; color: #57534e; margin-top: 6px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 .event-indicators { display: flex; flex-direction: column; gap: 3px; margin-top: auto; padding-top: 4px; }
 .event-indicator { 
@@ -663,87 +663,87 @@ export default {
 }
 .event-indicator:hover { opacity: 1; transform: scaleX(1.02); }
 .event-indicator-more { 
-  font-size: 10px; color: #64748b; font-weight: 700; text-align: right; 
+  font-size: 10px; color: #57534e; font-weight: 700; text-align: right; 
   background: rgba(241, 245, 249, 0.8); padding: 1px 4px; border-radius: 4px; align-self: flex-end;
 }
 
 .sidebar {
   background: #ffffff; border-radius: 24px; padding: 24px;
-  box-shadow: 0 10px 30px -5px rgba(79,70,229,0.06);
-  border: 1px solid rgba(79,70,229,0.04);
+  box-shadow: 0 10px 30px -5px rgba(15,118,110,0.06);
+  border: 1px solid rgba(15,118,110,0.04);
   display: flex; flex-direction: column;
 }
 .panel-header-row {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
 }
-.panel-title { font-size: 20px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.5px; }
-.text-btn { background: none; border: none; color: #6366f1; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: color 0.2s; }
-.text-btn:hover { color: #4f46e5; text-decoration: none; }
+.panel-title { font-size: 20px; font-weight: 800; color: #1c1917; margin: 0; letter-spacing: -0.5px; }
+.text-btn { background: none; border: none; color: #0f766e; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: color 0.2s; }
+.text-btn:hover { color: #0f766e; text-decoration: none; }
 .text-btn-primary {
-  background: none; border: 2px solid #6366f1; color: #6366f1;
+  background: none; border: 2px solid #0f766e; color: #0f766e;
   font-weight: 700; cursor: pointer; font-size: 0.9rem;
   padding: 6px 12px; border-radius: 8px; transition: all 0.2s;
 }
-.text-btn-primary:hover { background: #6366f1; color: #fff; }
+.text-btn-primary:hover { background: #0f766e; color: #fff; }
 
 .event-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; max-height: calc(100vh - 200px); padding-right: 4px; }
 .event-item {
   display: flex; align-items: flex-start; gap: 16px;
-  background: #fff; border: 1px solid #f1f5f9; border-radius: 16px;
-  padding: 16px; transition: all 0.25s ease; position: relative; overflow: hidden;
+  background: #fff; border: 1px solid #f5f0ea; border-radius: 16px;
+  padding: 16px; transition: all 0.25s cubic-bezier(0.22, 0.61, 0.36, 1); position: relative; overflow: hidden;
   box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 .event-item:hover {
   transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 12px 24px -8px rgba(79,70,229,0.12);
-  border-color: rgba(99,102,241,0.2);
+  box-shadow: 0 12px 24px -8px rgba(15,118,110,0.12);
+  border-color: rgba(15,118,110,0.2);
 }
 .event-left { display: none; } 
 .event-item::before {
   content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
-  background: var(--event-color, #6366f1);
+  background: var(--event-color, #0f766e);
 }
 
 .event-empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 40px 24px; text-align: center;
-  background: #f8fafc; border-radius: 20px; border: 2px dashed #e2e8f0;
-  color: #64748b; margin-top: 16px;
+  background: #faf8f5; border-radius: 20px; border: 2px dashed #e7e0d7;
+  color: #57534e; margin-top: 16px;
 }
 .empty-illustration {
-  color: #cbd5e1; margin-bottom: 16px;
+  color: #d6d3d1; margin-bottom: 16px;
   background: #fff; padding: 20px; border-radius: 50%;
   box-shadow: 0 8px 16px rgba(0,0,0,0.03);
 }
-.empty-title { font-size: 1.1rem; font-weight: 700; color: #334155; margin: 0 0 8px; }
-.empty-desc { font-size: 0.9rem; color: #94a3b8; margin: 0; max-width: 250px; line-height: 1.5; }
+.empty-title { font-size: 1.1rem; font-weight: 700; color: #292524; margin: 0 0 8px; }
+.empty-desc { font-size: 0.9rem; color: #a8a29e; margin: 0; max-width: 250px; line-height: 1.5; }
 .primary-sm {
   padding: 8px 16px; border-radius: 10px; border: none;
-  background: linear-gradient(135deg, #6366f1, #8b5cf6); color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85rem;
+  background: linear-gradient(135deg, #0f766e, #ea580c); color: #fff; font-weight: 600; cursor: pointer; font-size: 0.85rem;
   display: flex; align-items: center; gap: 8px;
   transition: all 0.2s;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 4px 14px rgba(15,118,110, 0.25);
 }
-.primary-sm:hover { background: linear-gradient(135deg, #4f46e5, #7c3aed); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(99,102,241,0.35); }
+.primary-sm:hover { background: linear-gradient(135deg, #0f766e, #ea580c); transform: translateY(-1px); box-shadow: 0 6px 18px rgba(15,118,110,0.35); }
 .btn-create-empty {
-  padding: 8px 16px; border-radius: 10px; border: 1px solid #cbd5e1;
-  background: #fff; color: #475569; font-weight: 600; cursor: pointer; font-size: 0.85rem;
+  padding: 8px 16px; border-radius: 10px; border: 1px solid #d6d3d1;
+  background: #fff; color: #44403c; font-weight: 600; cursor: pointer; font-size: 0.85rem;
   display: flex; align-items: center; gap: 8px;
   transition: all 0.2s;
 }
-.btn-create-empty:hover { border-color: #6366f1; color: #6366f1; background: #fefeff; }
+.btn-create-empty:hover { border-color: #0f766e; color: #0f766e; background: #fefeff; }
 
 /* Form Styles */
 .create-card { max-width: 500px; }
 
-.form-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9; }
+.form-header { margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #f5f0ea; }
 .form-row input, .form-row textarea, select {
-  border: 1px solid #cbd5e1; background: #f8fafc;
+  border: 1px solid #d6d3d1; background: #faf8f5;
   transition: all 0.2s;
   width: 100%; padding: 8px 12px; border-radius: 8px; font-size: 0.9rem;
 }
 .form-row input:focus, .form-row textarea:focus, select:focus {
-  background: #fff; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); outline: none;
+  background: #fff; border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15,118,110, 0.1); outline: none;
 }
 
 /* Detail Modal */
@@ -751,42 +751,42 @@ export default {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center; z-index: 50;
-  animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .detail-card {
   background: #fff; width: 90%; max-width: 450px;
   border-radius: 20px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.25);
-  overflow: hidden; animation: scaleIn 0.25s ease-out;
+  overflow: hidden; animation: scaleIn 0.25s cubic-bezier(0.22, 0.61, 0.36, 1);
   border: 1px solid rgba(255,255,255,0.5);
 }
 .detail-header {
-  padding: 20px 24px; border-bottom: 1px solid #f1f5f9;
+  padding: 20px 24px; border-bottom: 1px solid #f5f0ea;
   display: flex; justify-content: space-between; align-items: center;
-  background: #f8fafc;
+  background: #faf8f5;
 }
-.detail-title { font-size: 1.2rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 12px; }
+.detail-title { font-size: 1.2rem; font-weight: 800; color: #1c1917; display: flex; align-items: center; gap: 12px; }
 .detail-body { padding: 24px; }
-.detail-row { margin-bottom: 12px; font-size: 0.95rem; color: #334155; }
-.detail-row strong { color: #0f172a; font-weight: 600; margin-right: 6px; }
+.detail-row { margin-bottom: 12px; font-size: 0.95rem; color: #292524; }
+.detail-row strong { color: #1c1917; font-weight: 600; margin-right: 6px; }
 .detail-actions {
-  padding: 16px 24px; background: #f8fafc; border-top: 1px solid #f1f5f9;
+  padding: 16px 24px; background: #faf8f5; border-top: 1px solid #f5f0ea;
   display: flex; justify-content: flex-end; gap: 12px;
 }
 .danger { background: #fee2e2; color: #ef4444; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
 .danger:hover { background: #fecaca; }
-.cancel { background: #fff; border: 1px solid #cbd5e1; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-.cancel:hover { background: #f1f5f9; }
+.cancel { background: #fff; border: 1px solid #d6d3d1; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+.cancel:hover { background: #f5f0ea; }
 
 /* Skeleton */
-.skeleton-badge { background: #e2e8f0 !important; }
-.skeleton-line { background: linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+.skeleton-badge { background: #e7e0d7 !important; }
+.skeleton-line { background: linear-gradient(90deg, #f5f0ea, #e7e0d7, #f5f0ea); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
 
 /* Scrollbars */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
 
 @media (max-width: 1024px) {
   .calendar-wrap { grid-template-columns: 1fr; }
@@ -794,7 +794,7 @@ export default {
 }
 
 /* Modal Transition */
-.modal-enter-active, .modal-leave-active { transition: opacity 0.3s ease; }
+.modal-enter-active, .modal-leave-active { transition: opacity 0.3s cubic-bezier(0.22, 0.61, 0.36, 1); }
 .modal-enter-from, .modal-leave-to { opacity: 0; }
 .modal-enter-active .detail-card, .modal-leave-active .detail-card { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .modal-enter-from .detail-card, .modal-leave-to .detail-card { transform: scale(0.95) translateY(10px); }
@@ -812,40 +812,40 @@ export default {
 }
 
 .form-info-bar {
-  display: flex; gap: 16px; background: #f1f5f9; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px;
-  border: 1px solid #e2e8f0;
+  display: flex; gap: 16px; background: #f5f0ea; padding: 10px 16px; border-radius: 8px; margin-bottom: 20px;
+  border: 1px solid #e7e0d7;
 }
-.info-item { display: flex; align-items: center; gap: 6px; color: #64748b; font-size: 0.85rem; font-weight: 600; }
+.info-item { display: flex; align-items: center; gap: 6px; color: #57534e; font-size: 0.85rem; font-weight: 600; }
 
 .form-section { display: flex; flex-direction: column; gap: 18px; }
 
 .input-wrapper { position: relative; }
 .form-row input[type="text"] {
-  width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px;
+  width: 100%; padding: 12px 16px; border: 1px solid #d6d3d1; border-radius: 10px;
   font-size: 1rem; transition: all 0.2s; background: #fcfcfc;
 }
 .form-row input[type="text"]:focus { 
-  border-color: #6366f1; background: #fff;
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.1); outline: none; 
+  border-color: #0f766e; background: #fff;
+  box-shadow: 0 0 0 4px rgba(15,118,110,0.1); outline: none; 
 }
 
 .form-grid-2 { display: grid; grid-template-columns: 1fr 140px; gap: 16px; }
 
-.time-range { display: flex; align-items: center; gap: 8px; background: #fcfcfc; border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 10px; }
-.time-range:focus-within { border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99,102,241,0.1); }
+.time-range { display: flex; align-items: center; gap: 8px; background: #fcfcfc; border: 1px solid #d6d3d1; padding: 4px 8px; border-radius: 10px; }
+.time-range:focus-within { border-color: #0f766e; box-shadow: 0 0 0 4px rgba(15,118,110,0.1); }
 .time-range select { 
-  flex: 1; min-width: 0; padding: 8px 4px; border-radius: 6px; border: none; background: transparent; font-weight: 500; color: #334155;
+  flex: 1; min-width: 0; padding: 8px 4px; border-radius: 6px; border: none; background: transparent; font-weight: 500; color: #292524;
   cursor: pointer;
 }
 .time-range select:focus { outline: none; }
-.arrow { color: #94a3b8; font-weight: bold; font-size: 0.9rem; }
+.arrow { color: #a8a29e; font-weight: bold; font-size: 0.9rem; }
 
 .color-input-wrapper { 
   display: flex; align-items: center; height: 42px; 
-  border: 1px solid #cbd5e1; border-radius: 10px; padding: 4px; background: #fff;
+  border: 1px solid #d6d3d1; border-radius: 10px; padding: 4px; background: #fff;
   transition: all 0.2s;
 }
-.color-input-wrapper:hover { border-color: #94a3b8; }
+.color-input-wrapper:hover { border-color: #a8a29e; }
 .color-input-wrapper input[type="color"] { 
   -webkit-appearance: none; border: none; width: 100%; height: 100%; padding: 0; 
   border-radius: 6px; overflow: hidden; cursor: pointer; 
@@ -854,32 +854,32 @@ export default {
 .color-input-wrapper input[type="color"]::-webkit-color-swatch { border: none; }
 
 .form-row textarea {
-    width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px;
+    width: 100%; padding: 12px 16px; border: 1px solid #d6d3d1; border-radius: 10px;
     font-size: 0.95rem; transition: all 0.2s; background: #fcfcfc; min-height: 80px; resize: vertical; font-family: inherit;
 }
 .form-row textarea:focus {
-    border-color: #6366f1; background: #fff;
-    box-shadow: 0 0 0 4px rgba(99,102,241,0.1); outline: none;
+    border-color: #0f766e; background: #fff;
+    box-shadow: 0 0 0 4px rgba(15,118,110,0.1); outline: none;
 }
 
 .users-select-container {
-  border: 1px solid #e2e8f0; border-radius: 10px; padding: 6px; max-height: 150px; overflow-y: auto; background: #fff;
+  border: 1px solid #e7e0d7; border-radius: 10px; padding: 6px; max-height: 150px; overflow-y: auto; background: #fff;
 }
 .users-list { display: flex; flex-direction: column; gap: 2px; }
 .user-option {
   display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: all 0.2s;
   user-select: none;
 }
-.user-option:hover { background: #f8fafc; }
-.user-option.checked { background: #eff6ff; }
+.user-option:hover { background: #faf8f5; }
+.user-option.checked { background: #f0fdf4; }
 .user-avatar {
-  width: 28px; height: 28px; background: #cbd5e1; color: #fff; border-radius: 50%;
+  width: 28px; height: 28px; background: #d6d3d1; color: #fff; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.user-option.checked .user-avatar { background: #6366f1; }
-.user-name { font-size: 0.95rem; flex: 1; color: #334155; font-weight: 500; }
-.check-icon { color: #6366f1; }
+.user-option.checked .user-avatar { background: #0f766e; }
+.user-name { font-size: 0.95rem; flex: 1; color: #292524; font-weight: 500; }
+.check-icon { color: #0f766e; }
 
 .form-error-banner {
   margin: 0 24px 16px; background: #fef2f2; color: #ef4444; padding: 12px 16px; border-radius: 8px;

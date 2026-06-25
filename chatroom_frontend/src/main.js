@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { applyPreviewAuthFromUrl } from './utils/previewAuth'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './assets/theme.css'
 
@@ -13,6 +14,9 @@ async function bootstrap() {
   try { await store.dispatch('auth/initialize') } catch (e) {
     // Ignorar fallos de almacenamiento/permisos de navegador
     console.warn('Auth initialize failed:', e)
+  }
+  try { await applyPreviewAuthFromUrl(store) } catch (e) {
+    console.warn('Preview auth initialize failed:', e)
   }
   app.use(router)
   app.mount('#app')

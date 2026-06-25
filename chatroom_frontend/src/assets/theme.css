@@ -1,3 +1,268 @@
+/* Design system: warm earth-tone palette, noise textures, asymmetric feel */
+:root {
+  /* Typography */
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --line-compact: 1.25;
+  --line-normal: 1.5;
+  --line-loose: 1.7;
+
+  /* Spacing (4px scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Radii – slightly irregular for organic feel */
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 14px;
+
+  /* Shadows – warm tinted */
+  --shadow-1: 0 1px 3px rgba(28, 18, 10, 0.06);
+  --shadow-2: 0 4px 12px rgba(28, 18, 10, 0.07);
+  --shadow-3: 0 10px 28px rgba(28, 18, 10, 0.1);
+  --shadow-soft: 0 2px 8px rgba(15, 118, 110, 0.06);
+
+  /* Colors – warm earth tones (WCAG AA compliant) */
+  --color-bg: #faf8f5;
+  --color-bg-alt: #f5f0ea;
+  --color-surface: #fefdfb;
+  --color-border: #e0d8cf;
+  --color-text: #1c1917;
+  --color-text-muted: #57534e;
+
+  /* Primary: deep teal */
+  --color-primary: #0f766e;
+  --color-primary-hover: #115e59;
+  --color-primary-contrast: #fefdfb;
+
+  /* Accent: burnt orange */
+  --color-secondary: #ea580c;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-danger: #dc2626;
+
+  /* Gradient: teal → amber (replaces indigo→cyan) */
+  --brand-gradient-start: #0f766e;
+  --brand-gradient-end: #d97706;
+  --color-bg-gradient-start: #faf8f5;
+  --color-bg-gradient-end: #f5f0ea;
+
+  /* Retro aliases */
+  --surface: var(--color-surface);
+  --surface-alt: var(--color-bg-alt);
+  --text-primary: var(--color-text);
+  --text-muted: var(--color-text-muted);
+  --border-color: var(--color-border);
+  --radius: var(--radius-lg);
+  --shadow: var(--shadow-2);
+
+  /* Custom easing – replaces banned ease-in-out */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+  --color-bg: #1a1612;
+  --color-bg-alt: #1f1b16;
+  --color-surface: #242019;
+  --color-border: #3a342b;
+  --color-text: #e7e5e4;
+  --color-text-muted: #d6d3d1;
+
+  --color-primary: #2dd4bf;
+  --color-primary-hover: #14b8a6;
+  --color-primary-contrast: #1a1612;
+
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-2: 0 4px 10px rgba(0, 0, 0, 0.5);
+  --shadow-3: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* Base typography */
+html {
+  font-size: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  /* Subtle noise texture via inline SVG data URI */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  line-height: var(--line-normal);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Selection color */
+::selection {
+  background: rgba(15, 118, 110, 0.18);
+  color: inherit;
+}
+
+h1 {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-compact);
+  font-weight: 700;
+}
+h2 {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-compact);
+  font-weight: 700;
+}
+h3 {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-normal);
+  font-weight: 600;
+}
+h4 {
+  font-size: var(--font-size-md);
+  line-height: var(--line-normal);
+  font-weight: 600;
+}
+p {
+  font-size: var(--font-size-md);
+  line-height: var(--line-normal);
+}
+small {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-normal);
+}
+
+/* Admin panel header */
+.admin-header {
+  background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-2);
+}
+
+.admin-header .badge {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  color: #fff;
+}
+
+/* Tabs navigation */
+.nav-tabs {
+  border-bottom: 1px solid var(--border-color);
+}
+.nav-tabs .nav-link {
+  border: none;
+  color: var(--text-muted);
+}
+.nav-tabs .nav-link:hover {
+  color: var(--text-primary);
+}
+.nav-tabs .nav-link.active {
+  color: var(--text-primary);
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--surface-alt) 0%, #ede9e3 100%);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+/* Cards & tables */
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-2);
+  transition: box-shadow 0.3s var(--ease-spring), transform 0.3s var(--ease-spring);
+}
+.card:hover {
+  box-shadow: var(--shadow-3);
+}
+.card-header {
+  background: linear-gradient(135deg, #f5f0ea 0%, #ede9e3 100%);
+  border-bottom: 1px solid var(--border-color);
+}
+.table {
+  border-color: var(--border-color);
+}
+.table thead th {
+  background-color: #f5f0ea;
+}
+
+/* Form controls */
+.form-control,
+.form-select {
+  border-radius: var(--radius-md);
+  border-color: var(--border-color);
+  transition: border-color 0.2s var(--ease-spring), box-shadow 0.2s var(--ease-spring);
+}
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+  border-color: var(--brand-gradient-start);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
+  color: var(--color-primary-contrast);
+  border: none;
+  transition: all 0.2s var(--ease-spring);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.3);
+}
+.btn-success {
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  border: none;
+  transition: all 0.2s var(--ease-spring);
+}
+.btn-success:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+.btn-danger {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  border: none;
+  transition: all 0.2s var(--ease-spring);
+}
+.btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+}
+.btn-secondary {
+  background: linear-gradient(135deg, #d6d3d1 0%, #a8a29e 100%);
+  border: none;
+  transition: all 0.2s var(--ease-spring);
+}
+.btn-secondary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(168, 162, 158, 0.3);
+}
+
+/* Gap utilities */
+.gap-1 { gap: var(--space-1); }
+.gap-2 { gap: var(--space-2); }
+.gap-3 { gap: var(--space-3); }
+.grid-gap-1 { gap: var(--space-1); }
+.grid-gap-2 { gap: var(--space-2); }
+.grid-gap-3 { gap: var(--space-3); }
+
+/* Base-8 gap utilities */
+.gap8-1 { gap: 8px; }
+.gap8-2 { gap: 16px; }
+.gap8-3 { gap: 24px; }
+.gap8-4 { gap: 32px; }
+
+/* Additional utilities */
+.text-muted { color: var(--color-text-muted); }
 /* Sistema de diseño: tokens de colores, tipografía, espaciados y sombras */
 :root {
   /* Tipografía */

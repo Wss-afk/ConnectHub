@@ -16,28 +16,28 @@
           <path d="M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
         </svg>
       </div>
-      <div class="empty-title">No hay grupos</div>
-      <div class="empty-sub">Contacta con tu admin para crear un grupo</div>
-      <button class="empty-cta" type="button" @click="$emit('refresh')">Actualizar</button>
+      <div class="empty-title">No groups yet</div>
+      <div class="empty-sub">Contact your admin to create a group</div>
+      <button class="empty-cta" type="button" @click="$emit('refresh')">Refresh</button>
     </div>
     <transition-group v-else name="list-fade" tag="ul" class="list">
       <li
         v-for="group in groups"
         :key="group.id"
         @click="$emit('select', group)"
-        class="row"
+        class="conversation-row group-row"
         :class="{ active: selectedGroup && selectedGroup.id === group.id }"
       >
-        <div class="avatar-wrap">
-          <div class="avatar group-avatar" :title="group.name" role="img" :aria-label="'Grupo ' + group.name">{{ initials(group.name) }}</div>
+        <div class="conversation-avatar-wrap">
+          <div class="avatar group-avatar" :title="group.name" role="img" :aria-label="'Group ' + group.name">{{ initials(group.name) }}</div>
         </div>
-        <div class="info">
-          <div class="top">
-            <div class="name">{{ group.name }}</div>
+        <div class="conversation-copy">
+          <div class="conversation-topline">
+            <div class="conversation-name">{{ group.name }}</div>
           </div>
-          <div class="bottom">
-            <div class="sub">{{ group.users ? group.users.length : 0 }} miembros</div>
-            <span v-if="groupUnreadCounts[group.id] > 0" class="unread">{{ groupUnreadCounts[group.id] }}</span>
+          <div class="conversation-bottomline">
+            <div class="conversation-preview">{{ group.users ? group.users.length : 0 }} members</div>
+            <span v-if="groupUnreadCounts[group.id] > 0" class="conversation-unread">{{ groupUnreadCounts[group.id] }}</span>
           </div>
         </div>
       </li>
@@ -86,11 +86,11 @@ export default {
   border: none;
   border-bottom: 1px solid var(--border-color);
   position: relative;
-  transition: all .2s ease;
+  transition: all .2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .row:first-child { border-top: 1px solid var(--border-color); }
-.row:hover { background: linear-gradient(90deg, rgba(79,70,229,0.04) 0%, transparent 100%); transform: translateX(2px); }
-.row.active { background: linear-gradient(90deg, rgba(79,70,229,0.07) 0%, rgba(79,70,229,0.02) 100%); }
+.row:hover { background: linear-gradient(90deg, rgba(15,118,110,0.04) 0%, transparent 100%); transform: translateX(2px); }
+.row.active { background: linear-gradient(90deg, rgba(15,118,110,0.07) 0%, rgba(15,118,110,0.02) 100%); }
 
 .row::before {
   content: '';
@@ -98,7 +98,7 @@ export default {
   left: 0; top: 0; bottom: 0;
   width: 0;
   background: linear-gradient(180deg, var(--brand-gradient-start), var(--brand-gradient-end));
-  transition: width .2s ease;
+  transition: width .2s cubic-bezier(0.22, 0.61, 0.36, 1);
   border-radius: 0 4px 4px 0;
 }
 .row:hover::before, .row.active::before { width: 3px; }
@@ -110,8 +110,8 @@ export default {
   font-weight: 700; font-size: 13px;
   background: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
   color: #fff;
-  box-shadow: 0 2px 8px rgba(79,70,229,0.25);
-  transition: transform 0.2s ease;
+  box-shadow: 0 2px 8px rgba(15,118,110,0.25);
+  transition: transform 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 .row:hover .avatar.group-avatar { transform: scale(1.08); }
 
@@ -119,10 +119,10 @@ export default {
 .top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-.name { font-weight: 600; color: #334155; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .2s ease; }
-.sub { font-size: 13px; color: #64748b; transition: color .2s ease; flex: 1; }
+.name { font-weight: 600; color: #292524; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .2s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.sub { font-size: 13px; color: #57534e; transition: color .2s cubic-bezier(0.22, 0.61, 0.36, 1); flex: 1; }
 .row:hover .name { color: var(--brand-gradient-start); }
-.row:hover .sub { color: #4b5563; }
+.row:hover .sub { color: #44403c; }
 
 .unread {
   background: linear-gradient(135deg, #f87171, #ef4444);
@@ -130,7 +130,7 @@ export default {
   min-width: 20px; height: 20px; padding: 0 6px;
   display: inline-flex; align-items: center; justify-content: center;
   font-size: 11px; font-weight: 700;
-  animation: badgePulse 1.4s ease-in-out infinite;
+  animation: badgePulse 1.4s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
   box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
 }
 
@@ -146,7 +146,7 @@ export default {
 }
 
 /* Animaciones */
-.list-fade-enter-active, .list-fade-leave-active { transition: all .25s ease; }
+.list-fade-enter-active, .list-fade-leave-active { transition: all .25s cubic-bezier(0.22, 0.61, 0.36, 1); }
 .list-fade-enter-from, .list-fade-leave-to { opacity: 0; transform: translateY(6px); }
 
 @keyframes badgePulse {
@@ -164,26 +164,136 @@ export default {
   animation: shimmer 1.2s infinite;
 }
 .sk-lines { flex: 1; display: flex; flex-direction: column; gap: 6px; }
-.sk-line { height: 10px; background: linear-gradient(90deg, #f1f5f9, #e2e8f0, #f1f5f9); border-radius: 8px; animation: shimmer 1.2s infinite; }
+.sk-line { height: 10px; background: linear-gradient(90deg, #f5f0ea, #e7e0d7, #f5f0ea); border-radius: 8px; animation: shimmer 1.2s infinite; }
 .sk-line-1 { width: 40%; }
 .sk-line-2 { width: 60%; opacity: .9; }
 @keyframes shimmer { 0% { background-position: -200px 0; } 100% { background-position: 200px 0; } }
 
 /* Empty state */
-.empty { text-align: center; padding: 20px; color: #64748b; }
+.empty { text-align: center; padding: 20px; color: #57534e; }
 .empty-hero {
   display: inline-flex; align-items: center; justify-content: center;
-  color: #94a3b8; margin-bottom: 10px;
-  background: #f1f5f9; width: 56px; height: 56px; border-radius: 50%;
+  color: #a8a29e; margin-bottom: 10px;
+  background: #f5f0ea; width: 56px; height: 56px; border-radius: 50%;
 }
-.empty-title { font-weight: 800; color: #334155; font-size: 14px; }
-.empty-sub { font-size: 12px; margin-top: 4px; color: #94a3b8; }
+.empty-title { font-weight: 800; color: #292524; font-size: 14px; }
+.empty-sub { font-size: 12px; margin-top: 4px; color: #a8a29e; }
 .empty-cta {
   margin-top: 12px; padding: 8px 16px; border-radius: 10px;
-  border: 1px solid rgba(79,70,229,0.15);
-  background: linear-gradient(135deg, #eef2ff, #e0e7ff);
-  color: #4f46e5; font-weight: 700; cursor: pointer;
-  transition: all 0.2s ease;
+  border: 1px solid rgba(15,118,110,0.15);
+  background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+  color: #0f766e; font-weight: 700; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-.empty-cta:hover { background: linear-gradient(135deg, #e0e7ff, #c7d2fe); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(79,70,229,0.15); }
+.empty-cta:hover { background: linear-gradient(135deg, #d1fae5, #a7f3d0); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(15,118,110,0.15); }
+
+.conversation-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin: 0 10px 6px;
+  border-radius: 18px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 180ms cubic-bezier(0.22, 0.61, 0.36, 1), background-color 180ms cubic-bezier(0.22, 0.61, 0.36, 1), border-color 180ms cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.conversation-row:hover {
+  transform: translateX(2px);
+  background: rgba(15, 118, 110, 0.05);
+}
+
+.conversation-row.active {
+  background: linear-gradient(135deg, rgba(15,118,110,0.12), rgba(15,118,110,0.05));
+  border-color: rgba(15,118,110,0.16);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.conversation-row::before {
+  content: '';
+  width: 3px;
+  align-self: stretch;
+  border-radius: 999px;
+  background: transparent;
+  transition: background-color 180ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.conversation-row:hover::before,
+.conversation-row.active::before {
+  background: linear-gradient(180deg, #0f766e, #d97706);
+}
+
+.conversation-avatar-wrap {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.avatar.group-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(15,118,110,0.18);
+}
+
+.conversation-copy {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.conversation-topline,
+.conversation-bottomline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.conversation-name {
+  font-weight: 800;
+  color: #1c1917;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conversation-preview {
+  font-size: 13px;
+  color: #5e5348;
+  flex: 1;
+}
+
+.conversation-unread {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f87171, #ef4444);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.26);
+}
+
+@media (max-width: 768px) {
+  .conversation-row {
+    margin: 0 8px 6px;
+    padding: 10px 12px;
+  }
+
+  .conversation-avatar-wrap,
+  .avatar.group-avatar {
+    width: 34px;
+    height: 34px;
+  }
+}
 </style>
