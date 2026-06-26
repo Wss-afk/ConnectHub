@@ -263,8 +263,6 @@ export default {
       daysInMonth: Array.from({ length: last.getDate() }, (_, i) => i + 1),
       events: [],
       notifications: [],
-      quickNote: '',
-      saveStatus: '',
       wsConnected: false,
       globalSubscription: null,
       groupSubscriptions: {},
@@ -526,19 +524,6 @@ export default {
         console.warn('Error loading notifications:', e)
       }
     },
-    saveNote() {
-      if (this.currentUser && this.currentUser.id) {
-        localStorage.setItem(`user_quick_note_${this.currentUser.id}`, this.quickNote)
-        this.saveStatus = 'Saved'
-        setTimeout(() => { this.saveStatus = '' }, 2000)
-      }
-    },
-    clearNote() {
-      if (confirm('Clear all notes?')) {
-        this.quickNote = ''
-        this.saveNote()
-      }
-    },
     prevMonth() {
       if (this.month === 0) {
         this.month = 11
@@ -698,9 +683,6 @@ export default {
     this.nowTimer = window.setInterval(() => {
       this.nowTick = Date.now()
     }, 1000)
-    if (this.currentUser && this.currentUser.id) {
-      this.quickNote = localStorage.getItem(`user_quick_note_${this.currentUser.id}`) || ''
-    }
     await this.loadMonth()
     await this.loadNotifications()
     await this.loadGroups()
@@ -708,12 +690,7 @@ export default {
   },
   watch: {
     month() { this.loadMonth() },
-    year() { this.loadMonth() },
-    currentUser(newUser) {
-      if (newUser && newUser.id) {
-        this.quickNote = localStorage.getItem(`user_quick_note_${newUser.id}`) || ''
-      }
-    }
+    year() { this.loadMonth() }
   },
   beforeUnmount() {
     window.removeEventListener('keydown', this.handleKeydown)
@@ -730,7 +707,7 @@ export default {
 </script>
 
 <style scoped>
-.home-page { display: flex; min-height: 100vh; background: linear-gradient(135deg, #faf8f5 0%, #f0fdf4 50%, #faf8f5 100%); }
+.home-page { display: flex; min-height: 100vh; background: linear-gradient(135deg, #faf8f5 0%, #e6f4ee 50%, #faf8f5 100%); }
 .home-content { flex: 1; padding: 24px; max-width: 1600px; margin: 0 auto; }
 
 /* Animations */
@@ -761,7 +738,7 @@ export default {
 
 .welcome-left { display: flex; align-items: center; gap: 16px; }
 .greeting-icon {
-  background: linear-gradient(135deg, #f0fdf4, #d1fae5);
+  background: linear-gradient(135deg, #e6f4ee, #d8eadf);
   color: var(--brand-gradient-start);
   width: 48px; height: 48px; border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
@@ -775,12 +752,12 @@ export default {
 
 .empty-state {
   flex: 1; height: 100%;
-  display: flex; /* Asegurar display flex para align-items */
+  display: flex;
   justify-content: center; flex-direction: column; gap: 12px;
   padding: 40px 20px; color: #a8a29e; background: transparent;
   border: none;
   transition: all 0.2s;
-  align-items: center; /* Centrado horizontal del contenido flex */
+  align-items: center;
 }
 .empty-state:hover { background: transparent; }
 .empty-icon { color: #d6d3d1; margin-bottom: 4px; }
@@ -821,11 +798,11 @@ export default {
 
 .view-all {
   color: var(--brand-gradient-start); text-decoration: none; font-weight: 600; font-size: 0.9rem;
-  padding: 4px 12px; background: #f0fdf4; border-radius: 20px; transition: all 0.2s;
+  padding: 4px 12px; background: #e6f4ee; border-radius: 20px; transition: all 0.2s;
 }
-.view-all:hover { background: #d1fae5; transform: translateY(-1px); }
+.view-all:hover { background: #d8eadf; transform: translateY(-1px); }
 
-.calendar-card, .tasks-card, .notification-card, .quicknotes-card {
+.calendar-card, .tasks-card, .notification-card {
   background: #fff;
   border: 1px solid #f5f0ea;
   border-radius: 24px;
@@ -839,26 +816,20 @@ export default {
 .calendar-card { animation-delay: 0.1s; }
 .tasks-card { animation-delay: 0.2s; }
 .notification-card { animation-delay: 0.3s; }
-.quicknotes-card { animation-delay: 0.4s; }
-
-.calendar-card:hover, .tasks-card:hover, .notification-card:hover, .quicknotes-card:hover {
+.calendar-card:hover, .tasks-card:hover, .notification-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 20px 40px -10px rgba(15,118,110,0.1), 0 0 0 1px rgba(15,118,110,0.04);
 }
 
 /* Custom Scrollbar for lists */
 .tasks-list::-webkit-scrollbar,
-.notifications-list::-webkit-scrollbar,
-.quicknotes-card .notes-content textarea::-webkit-scrollbar { width: 5px; }
+.notifications-list::-webkit-scrollbar { width: 5px; }
 .tasks-list::-webkit-scrollbar-track,
-.notifications-list::-webkit-scrollbar-track,
-.quicknotes-card .notes-content textarea::-webkit-scrollbar-track { background: transparent; }
+.notifications-list::-webkit-scrollbar-track { background: transparent; }
 .tasks-list::-webkit-scrollbar-thumb,
-.notifications-list::-webkit-scrollbar-thumb,
-.quicknotes-card .notes-content textarea::-webkit-scrollbar-thumb { background-color: #e7e0d7; border-radius: 10px; }
+.notifications-list::-webkit-scrollbar-thumb { background-color: #e7e0d7; border-radius: 10px; }
 .tasks-list::-webkit-scrollbar-thumb:hover,
-.notifications-list::-webkit-scrollbar-thumb:hover,
-.quicknotes-card .notes-content textarea::-webkit-scrollbar-thumb:hover { background-color: #d6d3d1; }
+.notifications-list::-webkit-scrollbar-thumb:hover { background-color: #d6d3d1; }
 
 .calendar { padding: 20px 24px 24px; }
 .weekdays { display: grid; grid-template-columns: repeat(7,1fr); color: #a8a29e; font-weight: 700; font-size: 0.75rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
@@ -911,7 +882,7 @@ export default {
   background: #fff; color: var(--brand-gradient-start); border: 1px solid #e7e0d7;
   border-radius: 8px; padding: 6px 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 0.8rem;
 }
-.assign-btn:hover { background: #f0fdf4; border-color: #d1fae5; }
+.assign-btn:hover { background: #e6f4ee; border-color: #d8eadf; }
 
 .notification-card {
   display: flex; flex-direction: column;
@@ -930,39 +901,8 @@ export default {
 .notification-text { color: #44403c; font-weight: 500; font-size: 0.9rem; line-height: 1.5; }
 .notification-meta { color: #a8a29e; font-weight: 600; font-size: 0.75rem; margin-top: 4px; }
 .badge { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-.badge.user { background: #f0fdf4; color: #0f766e; }
+.badge.user { background: #e6f4ee; color: #0f766e; }
 .badge.group { background: #fef2f2; color: #dc2626; }
-
-.action-btn {
-  border: none; border-radius: 10px; padding: 8px 16px; cursor: pointer; font-weight: 600;
-  display: flex; align-items: center; gap: 8px; font-size: 0.85rem; transition: all 0.2s;
-}
-.save-btn { background: #10b981; color: #fff; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
-.save-btn:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); }
-.clear-btn { background: #fff; border: 1px solid #fee2e2; color: #ef4444; padding: 8px 12px; }
-.clear-btn:hover { background: #fef2f2; border-color: #fecaca; transform: translateY(-1px); }
-
-.quicknotes-card .notes-content { padding: 20px; display: flex; flex-direction: column; height: 280px; background: #fff; }
-.quicknotes-card textarea {
-  flex: 1; width: 100%; border: 2px solid #f5f0ea; border-radius: 16px; padding: 16px;
-  resize: none; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; outline: none;
-  background: #fff; color: #292524; line-height: 1.6; transition: all 0.2s;
-  background-image: linear-gradient(#f5f0ea 1px, transparent 1px);
-  background-size: 100% 32px;
-  line-height: 32px;
-  padding-top: 7px; /* Adjust to align text with lines */
-}
-.quicknotes-card textarea:focus {
-  border-color: #e7e0d7;
-  box-shadow: 0 0 0 4px #f5f0ea;
-}
-.save-status { font-size: 12px; color: #10b981; font-weight: 700; animation: fadeOut 2s forwards; margin-right: 8px; background: #ecfdf5; padding: 4px 10px; border-radius: 20px; }
-
-@keyframes fadeOut {
-  0% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; }
-}
-
-.right-actions { display: flex; align-items: center; gap: 12px; }
 
 .today-btn {
   background: #fff; border: 1px solid #e7e0d7; color: #57534e;
@@ -1377,8 +1317,7 @@ export default {
   color: #866a52;
 }
 
-.view-all,
-.save-status {
+.view-all {
   color: #0f766e;
 }
 
@@ -1395,27 +1334,6 @@ export default {
 .today-btn,
 .nav-btn {
   border-radius: 12px;
-}
-
-.notes-content {
-  padding: 0 14px 14px;
-}
-
-.quicknotes-card .notes-content {
-  background: transparent;
-}
-
-.quicknotes-card textarea {
-  min-height: 168px;
-  border-radius: 18px;
-  background:
-    linear-gradient(180deg, rgba(255, 253, 250, 0.96) 0%, rgba(248, 241, 232, 0.92) 100%);
-  border: 1px solid rgba(210, 192, 174, 0.76);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
-}
-
-.quicknotes-card textarea::placeholder {
-  color: #aa8c71;
 }
 
 .modal-card {

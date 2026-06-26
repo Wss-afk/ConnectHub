@@ -121,7 +121,7 @@ export default {
     },
     sortedUsers() {
       if (!this.currentUser) return this.users;
-      // Filtrar superadmins de la lista
+      // Keep admin-only accounts out of everyday chat routing.
       const others = this.users.filter(u => u.id !== this.currentUser.id && u.role !== 'SUPER_ADMIN');
       return [this.currentUser, ...others];
     },
@@ -149,16 +149,16 @@ export default {
       messages: [],
       inputMsg: '',
       selectedUser: null,
-      selectedGroup: null, // Grupo seleccionado
-      chatType: 'user', // 'user' o 'group'
+      selectedGroup: null,
+      chatType: 'user',
       globalSubscription: null,
-      groupSubscriptions: {}, // Suscripciones a grupos
+      groupSubscriptions: {},
       wsConnected: false,
-      unreadCounts: {}, // 存储每个用户的未读消息数量
-      groupUnreadCounts: {}, // 存储每个群组的未读消息数量
-      onlineUsers: [], // 存储在线用户列表
-      audioContext: null, // AudioContext para sonidos de notificación
-      userHasInteracted: false, // Flag para saber si el usuario ha interactuado
+      unreadCounts: {},
+      groupUnreadCounts: {},
+      onlineUsers: [],
+      audioContext: null,
+      userHasInteracted: false,
       showEmojiPicker: false,
       emojis: ['😀','😁','😂','😊','😍','😎','😘','😅','😉','🤩','🥳','😇','🙌','👍','👏','🔥','✨','❤️','💯','🎉'],
       activeTab: 'all',
@@ -208,49 +208,31 @@ export default {
           this.lastMessageMap[user.id] = { content: last.content, timestamp: last.timestamp, isMine, senderName }
         }
         
-        // 标记消息为已读
-          if (this.currentUser) {
-            await markMessagesAsRead(this.currentUser.id, user.id)
-            // Limpiar contador de mensajes no leídos de este usuario
-            this.unreadCounts[user.id] = 0
-            console.log(`Limpiar contador de no leídos del usuario ${user.id}`)
-          }
+        if (this.currentUser) {
+          await markMessagesAsRead(this.currentUser.id, user.id)
+          this.unreadCounts[user.id] = 0
+        }
       } catch (e) {
-        console.error('Error en selectUser:', e)
+        console.error('Failed to select user:', e)
       } finally {
         this.loadingMessages = false
         this.scrollToBottom()
       }
     },
     handleNewMessage(message) {
-      // Resolver senderId, compatible con diferentes estructuras
+      // Accept both REST DTOs and websocket payload shapes.
       const senderId = (message && message.sender && (message.sender.id ?? message.sender.userId)) || message.senderId
       const isFromSelf = senderId && this.currentUser && senderId === this.currentUser.id
-      
-      console.log('Procesando mensaje nuevo:', {
-        senderId,
-        isFromSelf,
-        isGroup: !!message.group,
-        selectedUserId: this.selectedUser?.id,
-        chatType: this.chatType
-      })
-      
-      // Si el mensaje no es del usuario actual
+
       if (!isFromSelf) {
-        
-        // Solo procesar mensajes individuales para conteo de no leídos
-        // Los mensajes de grupo no deben aparecer como no leídos en usuarios individuales
+        // Group messages use their own unread counter.
         if (!message.group && senderId) {
-          // Incrementar contador solo si no es el chat actualmente seleccionado
           const isCurrentChat = this.chatType === 'user' && this.selectedUser && senderId === this.selectedUser.id
           
           if (!isCurrentChat) {
              const newCount = (this.unreadCounts[senderId] || 0) + 1
-             // En Vue 3, usar asignación directa para reactividad
              this.unreadCounts[senderId] = newCount
-             console.log(`Usuario ${senderId} mensajes no leídos actualizados a:`, newCount)
            }
-          // Actualizar último mensaje del remitente
           this.lastMessageMap[senderId] = { 
             content: message.content, 
             timestamp: message.timestamp, 
@@ -259,12 +241,10 @@ export default {
           }
         }
         
-        // Mostrar notificación de escritorio solo para mensajes individuales
         if (!message.group) {
           this.showNotification(message)
         }
         
-        // Reproducir sonido de notificación
         this.playNotificationSound()
       }
     },
@@ -289,30 +269,26 @@ export default {
       }
     },
     playNotificationSound() {
-      // Solo reproducir sonido si el usuario ha interactuado con la página
       if (!this.userHasInteracted) {
-        console.log('No se puede reproducir sonido: el usuario no ha interactuado con la página')
         return
       }
 
       try {
-        // Crear o reutilizar AudioContext
         if (!this.audioContext) {
           this.audioContext = new (window.AudioContext || window.webkitAudioContext)()
         }
 
-        // Reanudar AudioContext si está suspendido
         if (this.audioContext.state === 'suspended') {
           this.audioContext.resume().then(() => {
             this.createNotificationSound()
           }).catch(error => {
-            console.error('Error al reanudar AudioContext:', error)
+            console.error('Failed to resume AudioContext:', error)
           })
         } else {
           this.createNotificationSound()
         }
       } catch (error) {
-        console.error('Error al crear AudioContext:', error)
+        console.error('Failed to create AudioContext:', error)
       }
     },
     
@@ -335,13 +311,13 @@ export default {
         oscillator.start(this.audioContext.currentTime)
         oscillator.stop(this.audioContext.currentTime + 0.2)
       } catch (error) {
-        console.error('Error al crear sonido de notificación:', error)
+        console.error('Failed to create notification sound:', error)
       }
     },
     async selectGroup(group) {
       try {
         this.selectedGroup = group
-        this.selectedUser = null // Limpiar selección de usuario
+        this.selectedUser = null
         this.chatType = 'group'
         this.loadingMessages = true
         
@@ -350,20 +326,18 @@ export default {
         const res = await fetchMessages({ groupId: group.id, userId: meId })
         this.messages = res.data.slice().sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
         
-        // Suscribirse a mensajes del grupo
         this.subscribeToGroupChannel(group.id)
         
-        // Marcar como leído y limpiar contador
         if (group && group.id && meId) {
           try {
             await markGroupMessagesAsRead(meId, group.id)
             this.groupUnreadCounts[group.id] = 0
           } catch (e) {
-            console.error('Error al marcar grupo como leído:', e)
+            console.error('Failed to mark group as read:', e)
           }
         }
       } catch (e) {
-        console.error('Error en selectGroup:', e)
+        console.error('Failed to select group:', e)
       } finally {
         this.loadingMessages = false
         this.scrollToBottom()
@@ -372,7 +346,6 @@ export default {
     async send() {
       if (this.inputMsg.trim()) {
         const content = this.inputMsg
-        // Comprobar estado de conexión antes de enviar
         try {
           const { isConnected } = await import('../services/websocket.js')
           if (!isConnected || !isConnected()) {
@@ -380,8 +353,7 @@ export default {
             return
           }
         } catch (e) {
-          // Si falla la detección, continuar pero avisar
-          this.showToast('Sending…', 'info')
+          this.showToast('Sending...', 'info')
         }
 
         if (this.chatType === 'user' && this.selectedUser) {
@@ -392,10 +364,9 @@ export default {
             type: 'text',
             timestamp: new Date().toISOString()
           }
-          // Enviar via STOMP; la UI se actualiza solo cuando el servidor hace eco
+          // Wait for the server echo before inserting into the thread.
           sendMessage('/app/chat/single', message)
           this.showToast('Message sent', 'success')
-          // Actualizar hint de último mensaje en la lista
           this.lastMessageMap[this.selectedUser.id] = { 
             content, 
             timestamp: message.timestamp,
@@ -410,7 +381,6 @@ export default {
             type: 'text',
             timestamp: new Date().toISOString()
           }
-          // Enviar via STOMP; no hacer inserción optimista
           sendMessage('/app/chat/group', message)
           this.showToast('Sent to group', 'success')
         }
@@ -444,30 +414,25 @@ export default {
         }
         if (this.chatType === 'user' && this.selectedUser) {
           const message = { ...baseMessage, receiver: { id: this.selectedUser.id, username: this.selectedUser.username } }
-          // Enviar via STOMP; la UI se actualizará con el eco del servidor
           sendMessage('/app/chat/single', message)
         } else if (this.chatType === 'group' && this.selectedGroup) {
           const message = { ...baseMessage, group: { id: this.selectedGroup.id, name: this.selectedGroup.name } }
           sendMessage('/app/chat/group', message)
         }
-        // limpiar input de archivo
         evt.target.value = ''
       } catch (err) {
-        console.error('Error al enviar adjunto:', err)
+        console.error('Failed to send attachment:', err)
         this.showToast('Failed to send attachment', 'error')
       }
     },
     subscribeToGroupChannel(groupId) {
       const topic = `/topic/group/${groupId}`
-      console.log('Suscribiendo a canal de grupo:', topic)
       
-      // Desuscribirse del canal anterior si existe
       if (this.groupSubscriptions[groupId]) {
         this.groupSubscriptions[groupId].unsubscribe()
       }
       
       this.groupSubscriptions[groupId] = subscribe(topic, (msg) => {
-        console.log('Mensaje de grupo recibido:', msg)
         const msgGroupId = (msg && msg.group && msg.group.id) || groupId
         const isCurrentGroup = this.chatType === 'group' && this.selectedGroup && msg.group && msg.group.id === this.selectedGroup.id
         
@@ -478,19 +443,14 @@ export default {
             this.scrollToBottom()
           })
         } else {
-          // Verificar si el mensaje es propio para no notificar
           const senderId = (msg && msg.sender && (msg.sender.id ?? msg.sender.userId)) || msg.senderId
           const isFromSelf = senderId && this.currentUser && senderId === this.currentUser.id
 
           if (!isFromSelf) {
-            // Incrementar contador de no leídos para el grupo
             const newCount = (this.groupUnreadCounts[msgGroupId] || 0) + 1
             this.groupUnreadCounts[msgGroupId] = newCount
-            console.log(`Grupo ${msgGroupId} mensajes no leídos:`, newCount)
             
-            // Reproducir sonido de notificación para mensajes de grupo no visibles
             this.playNotificationSound()
-            // Mostrar notificación de escritorio
             this.showNotification(msg)
           }
         }
@@ -508,45 +468,37 @@ export default {
     
     initWebSocketConnection() {
       if (!this.currentUser) {
-        console.error('No hay información de usuario actual, no se puede establecer conexión WebSocket')
+        console.error('Missing current user; cannot start WebSocket connection')
         return
       }
      
       connectWebSocket(window.location.origin + '/ws', this.currentUser.username, null, () => {
-        console.log('WebSocket conectado')
         this.wsConnected = true
         
-        // Configurar callback de usuarios en línea
         setOnlineUsersCallback((onlineUsers) => {
           const normalized = this.normalizeOnlineUsers(onlineUsers)
           this.onlineUsers = normalized
-          console.log('Lista de usuarios en línea actualizada (normalizada):', normalized)
         })
         
-        // Tras conectar WebSocket, suscribirse al canal del usuario actual
         setTimeout(() => {
           this.subscribeToPublicChannel()
           this.subscribeToGlobalUserChannel()
           this.subscribeToControlChannel()
-          // Suscribirse a todos los canales de grupo para contar no leídos
           this.subscribeToAllGroupChannels()
-        }, 100) // Pequeño retraso para asegurar que la conexión esté lista
+        }, 100)
       }, (error) => {
-        console.error('Error de conexión WebSocket:', error)
+        console.error('WebSocket connection failed:', error)
         this.wsConnected = false
       })
     },
     
     subscribeToPublicChannel() {
-      // Canal público para eventos generales como actualizaciones de perfil
       subscribe('/topic/public', (msg) => {
         if (msg && msg.action === 'user_updated') {
-          // Si es el usuario actual, actualizar vuex
           if (String(msg.userId) === String(this.currentUser.id)) {
             this.$store.commit('auth/SET_USER', { ...this.currentUser, avatarUrl: msg.avatarUrl, username: msg.username })
           }
           
-          // Actualizar lista de usuarios local
           this.users = this.users.map(u => {
             if (String(u.id) === String(msg.userId)) {
               return { ...u, avatarUrl: msg.avatarUrl, username: msg.username }
@@ -554,7 +506,6 @@ export default {
             return u
           })
           
-          // Si el usuario actualizado es el seleccionado, actualizarlo también
           if (this.selectedUser && String(this.selectedUser.id) === String(msg.userId)) {
              this.selectedUser = { ...this.selectedUser, avatarUrl: msg.avatarUrl, username: msg.username }
           }
@@ -565,14 +516,9 @@ export default {
     subscribeToGlobalUserChannel() {
       if (this.currentUser) {
         const topic = `/user/queue/messages`
-        console.log('Suscripción al canal de mensajes:', topic)
         this.globalSubscription = subscribe(topic, (msg) => {
-          console.log('Nuevo mensaje recibido:', msg)
-          // Procesar métricas/contador, notificaciones, etc.
           this.handleNewMessage(msg)
 
-          // Añadir al hilo si pertenece al chat usuario actual,
-          // ya sea como remitente o como receptor.
           const senderId = (msg && msg.sender && (msg.sender.id ?? msg.sender.userId)) || msg.senderId
           const receiverId = (msg && msg.receiver && (msg.receiver.id ?? msg.receiver.userId)) || msg.receiverId
           const isUserChat = this.chatType === 'user' && !!this.selectedUser
@@ -586,26 +532,21 @@ export default {
           }
         })
         
-        if (this.globalSubscription) {
-          console.log('Suscripción global exitosa')
-        } else {
-          console.error('Suscripción global fallida')
+        if (!this.globalSubscription) {
+          console.error('Global message subscription failed')
         }
       } else {
-        console.error('No hay usuario actual, no se pueden suscribir mensajes')
+        console.error('Missing current user; cannot subscribe to messages')
       }
     },
 
-    // Suscribirse al canal de control para recibir eventos como force-logout
     subscribeToControlChannel() {
       if (this.currentUser) {
         const topic = `/user/queue/control`
-        console.log('Suscripción al canal de control:', topic)
         this.controlSubscription = subscribe(topic, (msg) => {
           try {
             if (msg && msg.action === 'force_logout') {
-              console.warn('Recibido force_logout; desconectando WebSocket')
-              // Desconectar socket y notificar al usuario
+              console.warn('Force logout received; disconnecting WebSocket')
               disconnectWebSocket()
               this.wsConnected = false
               const reason = msg && (msg.reason || msg.detail || msg.message)
@@ -616,16 +557,15 @@ export default {
                 text = 'Your account was disabled by an admin.'
               }
               alert(text)
-              // Cerrar sesión y redirigir al login
               try {
                 this.$store.dispatch('auth/logout')
               } catch (e) {
-                console.error('Error al ejecutar logout en store:', e)
+                console.error('Failed to run auth logout:', e)
               }
               this.$router.push('/login')
             }
           } catch (e) {
-            console.error('Error procesando control message:', e)
+            console.error('Failed to process control message:', e)
           }
         })
       }
@@ -638,10 +578,9 @@ export default {
           const data = await response.json()
           const normalized = this.normalizeOnlineUsers(data)
           this.onlineUsers = normalized
-          console.log('Lista de usuarios en línea (normalizada):', normalized)
         }
       } catch (error) {
-        console.error('Error al obtener lista de usuarios en línea:', error)
+        console.error('Failed to fetch online users:', error)
       }
     },
     
@@ -658,7 +597,7 @@ export default {
               const response = await getUnreadCount(this.currentUser.id, user.id)
               unreadCounts[user.id] = response.data
             } catch (error) {
-              console.error(`Error al obtener no leídos del usuario ${user.id}:`, error)
+              console.error(`Failed to fetch unread count for user ${user.id}:`, error)
               unreadCounts[user.id] = 0
             }
           }
@@ -666,20 +605,16 @@ export default {
         
         this.unreadCounts = unreadCounts
         
-        // Obtener contadores de grupos
         try {
           const groupRes = await getGroupUnreadCounts(this.currentUser.id)
           if (groupRes.data) {
-            // Asegurarse de que groupUnreadCounts es reactivo
             this.groupUnreadCounts = { ...groupRes.data }
           }
         } catch (e) {
-          console.error('Error fetching group unread counts', e)
+          console.error('Failed to fetch group unread counts:', e)
         }
-
-        console.log('Cantidad de mensajes no leídos:', this.unreadCounts, this.groupUnreadCounts)
       } catch (error) {
-        console.error('Error al obtener cantidad de no leídos:', error)
+        console.error('Failed to fetch unread counts:', error)
       }
     },
     
@@ -694,12 +629,9 @@ export default {
     },
     
     setupUserInteractionDetection() {
-      // Detectar cualquier interacción del usuario (click, keydown, touchstart)
       const enableAudio = () => {
         this.userHasInteracted = true
-        console.log('Usuario ha interactuado - AudioContext habilitado')
         
-        // Remover los event listeners una vez que se detecta la interacción
         document.removeEventListener('click', enableAudio)
         document.removeEventListener('keydown', enableAudio)
         document.removeEventListener('touchstart', enableAudio)
@@ -719,7 +651,6 @@ export default {
             const res = await fetchMessages({ receiverId: u.id, userId: meId })
             const arr = Array.isArray(res.data) ? res.data : []
             if (arr.length) {
-              // Ordenar por fecha para asegurar que tomamos el último
               arr.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
               const last = arr[arr.length - 1]
               const isMine = last.sender && last.sender.id === meId
@@ -727,12 +658,12 @@ export default {
               this.lastMessageMap[u.id] = { content: last.content, timestamp: last.timestamp, isMine, senderName }
             }
           } catch (e) {
-            console.warn('No se pudo cargar último mensaje de usuario', u.id, e)
+            console.warn('Failed to load last message for user', u.id, e)
           }
         })
         await Promise.allSettled(tasks)
       } catch (e) {
-        console.error('Error al poblar últimos mensajes iniciales:', e)
+        console.error('Failed to populate initial last messages:', e)
       }
     },
     
@@ -761,8 +692,6 @@ export default {
     checkRouteParams() {
       const { userId, groupId } = this.$route.query
       if (userId) {
-        // Esperar a que users esté cargado si es necesario, pero aquí ya debería estarlo
-        // porque llamamos a checkRouteParams al final de mounted o en watch
         const u = this.users.find(x => String(x.id) === String(userId))
         if (u) {
           this.activeTab = 'contacts'
@@ -795,22 +724,16 @@ export default {
       this.loadingGroups = false
     }
     
-    // 获取初始在线用户列表
     await this.fetchOnlineUsers()
     
-    // 获取未读消息数量
     await this.fetchUnreadCounts()
     
-    // Poblar el último mensaje/hora para todos los usuarios al iniciar
     await this.populateInitialLastMessages()
     
-    // 初始化WebSocket连接
     this.initWebSocketConnection()
     
-    // Detectar interacción del usuario para habilitar AudioContext
     this.setupUserInteractionDetection()
 
-    // Verificar parámetros de ruta al iniciar
     this.checkRouteParams()
   },
   watch: {
@@ -826,7 +749,6 @@ export default {
       this.globalSubscription.unsubscribe()
     }
     
-    // Desuscribirse de todos los canales de grupo
     Object.values(this.groupSubscriptions).forEach(subscription => {
       if (subscription) {
         subscription.unsubscribe()
@@ -839,7 +761,6 @@ export default {
 </script>
 
 <style scoped>
-/* 页面整体背景渐变 */
 body {
   background: linear-gradient(135deg, var(--brand-gradient-start) 0%, var(--brand-gradient-end) 100%);
   min-height: 100vh;
@@ -933,86 +854,6 @@ body {
 }
 .profile-name { font-weight: 700; color: var(--text-primary); }
 .profile-sub { font-size: 12px; color: var(--text-muted); }
-
-.sidebar {
-  width: 290px;
-  background: linear-gradient(180deg, #faf8f5 0%, #ffffff 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  border-right: 1px solid var(--border-color);
-  position: relative;
-}
-
-.sidebar::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
-}
-
-.sidebar-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.brand-logo {
-  width: 28px;
-  height: 28px;
-}
-
-.brand-text { display: flex; flex-direction: column; line-height: 1; }
-.brand-name { font-weight: 700; color: #292524; font-size: 16px; }
-.brand-sub { color: #a8a29e; font-size: 12px; }
-
-.sidebar-user {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  background: linear-gradient(180deg, var(--surface-alt) 0%, var(--surface) 100%);
-  color: #292524;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.2px;
-  border-bottom: 1px solid var(--border-color);
-  box-shadow: none;
-}
-
-.sidebar-user::after { content: none; }
-
-.sidebar-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: #a7f3d0;
-  border: 2px solid #f0fdf4;
-}
-
-.sidebar-username { color: #292524; font-weight: 600; text-shadow: none; }
-.sidebar-self { color: #57534e; font-size: 12px; margin-left: 4px; font-weight: 500; }
-
-.sidebar-username {
-  color: #292524;
-  font-weight: 600;
-  text-shadow: none;
-}
-
-.sidebar-self {
-  color: #57534e;
-  font-size: 12px;
-  margin-left: 4px;
-  font-weight: 500;
-}
-
-/* self-badge eliminado */
 
 .chats-header {
   padding: 14px 16px 0;
@@ -1271,7 +1112,7 @@ body {
   inset: -18px;
   border-radius: 40px;
   border: 1.5px solid rgba(15,118,110,0.08);
-  animation: heroRing 3s ease-in-out infinite 0.5s;
+  animation: heroRing 3s cubic-bezier(0.22, 0.61, 0.36, 1) infinite 0.5s;
 }
 
 @keyframes heroRing {
@@ -1473,9 +1314,9 @@ body {
     from { opacity: 0; transform: translateX(20px); }
     to { opacity: 1; transform: translateX(0); }
   }
-  .toast-success { background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #065f46; border: 1px solid rgba(16,185,129,0.3); }
-  .toast-error { background: linear-gradient(135deg, #fef2f2, #fee2e2); color: #7f1d1d; border: 1px solid rgba(239,68,68,0.3); }
-  .toast-info { background: linear-gradient(135deg, #eff6ff, #dbeafe); color: #1e3a8a; border: 1px solid rgba(59,130,246,0.3); }
+.toast-success { background: linear-gradient(135deg, #e6f4ee, #d8eadf); color: #14532d; border: 1px solid rgba(15,118,110,0.24); }
+.toast-error { background: linear-gradient(135deg, #fff4ef, #fee2d5); color: #7c2d12; border: 1px solid rgba(220,38,38,0.24); }
+.toast-info { background: linear-gradient(135deg, #f7efe5, #e6f4ee); color: #134e4a; border: 1px solid rgba(15,118,110,0.2); }
 
   .chat-page {
     width: auto;

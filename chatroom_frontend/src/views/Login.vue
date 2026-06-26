@@ -8,7 +8,13 @@
     <div class="login-card">
       <!-- Header -->
       <div class="login-header">
-        <h2 class="app-title">ConnectHub</h2>
+        <div class="login-brand">
+          <BrandMark class="login-logo" :size="52" />
+          <div class="login-brand-copy">
+            <span class="login-kicker">Team console</span>
+            <h2 class="app-title">ConnectHub</h2>
+          </div>
+        </div>
         <div class="title-divider"></div>
         <p class="login-subtitle">Welcome back. Let's go.</p>
       </div>
@@ -81,8 +87,11 @@
 </template>
 
 <script>
+import BrandMark from '../components/BrandMark.vue'
+
 export default {
   name: 'LoginPage',
+  components: { BrandMark },
   data() {
     return {
       username: '',
@@ -147,6 +156,32 @@ export default {
   overflow: hidden;
 }
 
+.login-container::before,
+.login-container::after {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  pointer-events: none;
+}
+
+.login-container::before {
+  background:
+    radial-gradient(ellipse at 18% 24%, rgba(15, 118, 110, 0.16), transparent 32%),
+    radial-gradient(ellipse at 74% 18%, rgba(217, 119, 6, 0.14), transparent 30%),
+    radial-gradient(ellipse at 82% 78%, rgba(234, 88, 12, 0.12), transparent 34%);
+  filter: blur(18px);
+  opacity: 0.82;
+  animation: loginAurora 18s cubic-bezier(0.22, 0.61, 0.36, 1) infinite alternate;
+}
+
+.login-container::after {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+  opacity: 0.58;
+  animation: grainDrift 9s steps(6) infinite;
+}
+
 .bg-blob {
   position: absolute;
   border-radius: 50%;
@@ -177,8 +212,19 @@ export default {
 }
 
 @keyframes blobFloat {
-  0%   { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(35px, -25px) scale(1.1); }
+  0%   { transform: translate(0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate(42px, -30px) scale(1.12) rotate(10deg); }
+}
+
+@keyframes loginAurora {
+  0% { transform: translate3d(-2%, 1%, 0) rotate(-2deg) scale(1); }
+  45% { transform: translate3d(3%, -2%, 0) rotate(2deg) scale(1.04); }
+  100% { transform: translate3d(5%, 3%, 0) rotate(-1deg) scale(1.08); }
+}
+
+@keyframes grainDrift {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(24px, -18px, 0); }
 }
 
 /* Card */
@@ -206,6 +252,31 @@ export default {
 .login-header {
   text-align: left;
   padding: 40px 32px 24px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-logo {
+  flex: 0 0 auto;
+  filter: drop-shadow(0 12px 22px rgba(15, 118, 110, 0.16));
+}
+
+.login-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.login-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9a6b48;
 }
 
 .app-title {
@@ -244,6 +315,13 @@ export default {
 .input-group {
   position: relative;
   margin-bottom: 16px;
+  width: 100%;
+  height: 64px;
+  border-radius: 18px;
+  border: 1px solid #e0d8cf;
+  background: #faf8f5;
+  overflow: hidden;
+  transition: border-color 0.25s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1), background 0.25s;
 }
 
 .input-icon {
@@ -260,13 +338,12 @@ export default {
 .input-group input {
   display: block;
   width: 100%;
-  padding: 13px 44px 13px 44px;
-  border-radius: 13px;
-  border: 1px solid #e0d8cf;
-  background: #faf8f5;
+  height: 100%;
+  padding: 0 48px 0 54px;
+  border: 0;
+  background: transparent;
   color: #1c1917;
   font-size: 0.95rem;
-  transition: border-color 0.25s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 0.61, 0.36, 1), background 0.25s;
   box-sizing: border-box;
 }
 .input-group input::placeholder {
@@ -274,6 +351,8 @@ export default {
 }
 .input-group input:focus {
   outline: none;
+}
+.input-group:focus-within {
   border-color: #0f766e;
   background: #fefdfb;
   box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12);
@@ -284,15 +363,20 @@ export default {
 
 .toggle-pw {
   position: absolute;
-  right: 12px;
+  right: 10px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   color: #a8a29e;
   cursor: pointer;
-  display: flex;
-  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  padding: 0;
   transition: color 0.2s;
 }
 .toggle-pw:hover {
@@ -379,6 +463,16 @@ export default {
   .login-container {
     justify-content: center;
     padding: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-container::before,
+  .login-container::after,
+  .bg-blob,
+  .login-card,
+  .spinner {
+    animation: none;
   }
 }
 </style>

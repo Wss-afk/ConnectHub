@@ -3,8 +3,10 @@
     <AppDock />
     <main class="content">
       <header class="topbar">
-        <div class="left">
+        <div class="left topbar-copy">
+          <span class="topbar-kicker">Month board</span>
           <h1 class="title">{{ monthLabel }}</h1>
+          <p class="topbar-subtitle">{{ monthEvents.length }} blocks in this view.</p>
         </div>
         <div class="controls gap8-2">
           <button class="nav-btn" @click="prevMonth" aria-label="Previous month">
@@ -54,10 +56,10 @@
           </div>
 
           <div class="month-agenda-section">
-            <h2 class="section-title">Agenda for {{ monthLabel }}</h2>
+            <h2 class="section-title">This month</h2>
             <div class="agenda-list">
               <div v-if="monthEvents.length === 0" class="agenda-empty">
-                No events scheduled this month.
+                Nothing booked this month.
               </div>
               <div v-else v-for="ev in monthEvents" :key="'m-'+ev.id" :class="['agenda-item', isPastEvent(ev) && 'is-past']" @click="selectDayAndEvent(ev)">
                 <div class="agenda-date">
@@ -83,8 +85,11 @@
 
         <aside class="sidebar">
           <div class="panel">
-            <div class="panel-header-row" style="display: flex; justify-content: space-between; align-items: center;">
-              <h2 class="panel-title">{{ selectedDay ? `Events: ${selectedDayLabel}` : 'Pick a day' }}</h2>
+            <div class="panel-header-row">
+              <div class="panel-copy">
+                <h2 class="panel-title">{{ selectedDay ? selectedDayLabel : 'Pick a day' }}</h2>
+                <p class="panel-subtitle">{{ filteredEvents.length }} events lined up.</p>
+              </div>
               <button class="primary-sm icon-only" @click="openCreateForm" title="New event" v-if="selectedDay">
                 <Icon name="plus" :size="16" />
               </button>
@@ -125,9 +130,9 @@
                   <div class="empty-illustration">
                     <Icon name="calendar" :size="48" />
                   </div>
-                  <h3 class="empty-title">{{ selectedDay ? 'No plans for today' : 'No events this month' }}</h3>
-                  <p class="empty-desc" v-if="selectedDay">Looks like a quiet day. Add an event?</p>
-                  <p class="empty-desc" v-else>No events scheduled this month.</p>
+                  <h3 class="empty-title">{{ selectedDay ? 'Quiet day.' : 'No events yet.' }}</h3>
+                  <p class="empty-desc" v-if="selectedDay">Nothing booked for this date.</p>
+                  <p class="empty-desc" v-else>Pick a day and start a block.</p>
                   <div v-if="selectedDay" style="margin-top: 20px">
                   </div>
                 </li>
@@ -642,7 +647,7 @@ export default {
   box-shadow: 0 2px 8px rgba(15,118,110,0.35);
 }
 .day.selected {
-  border-color: #0f766e; background: #f0fdf4;
+  border-color: #0f766e; background: #e6f4ee;
   box-shadow: inset 0 0 0 1px #0f766e;
 }
 .day.empty { visibility: hidden; pointer-events: none; }
@@ -871,7 +876,7 @@ export default {
   user-select: none;
 }
 .user-option:hover { background: #faf8f5; }
-.user-option.checked { background: #f0fdf4; }
+.user-option.checked { background: #e6f4ee; }
 .user-avatar {
   width: 28px; height: 28px; background: #d6d3d1; color: #fff; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;
@@ -898,5 +903,285 @@ export default {
 }
 .is-past:hover {
   opacity: 0.8;
+}
+
+.events-page.light {
+  background:
+    radial-gradient(circle at 14% 12%, rgba(15, 118, 110, 0.08), transparent 26%),
+    radial-gradient(circle at 88% 10%, rgba(234, 88, 12, 0.08), transparent 22%),
+    linear-gradient(145deg, #f7f2ea 0%, #f5efe6 48%, #efe6da 100%);
+  color: #221912;
+}
+
+.content {
+  padding: 20px 24px 28px;
+}
+
+.topbar {
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.topbar-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topbar-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #9a6b48;
+}
+
+.title {
+  font-size: 34px;
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+  color: #201812;
+}
+
+.topbar-subtitle {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #7a6653;
+}
+
+.controls {
+  gap: 10px;
+}
+
+.nav-btn,
+.primary {
+  border-radius: 14px;
+}
+
+.calendar-wrap {
+  grid-template-columns: minmax(0, 1.25fr) minmax(330px, 0.9fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.calendar-column {
+  gap: 18px;
+}
+
+.calendar,
+.month-agenda-section,
+.sidebar {
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 248, 0.97) 0%, rgba(249, 243, 235, 0.94) 100%);
+  border: 1px solid rgba(212, 195, 177, 0.62);
+  box-shadow: 0 20px 46px rgba(88, 67, 49, 0.08);
+}
+
+.calendar {
+  padding: 18px;
+}
+
+.month-agenda-section,
+.sidebar {
+  padding: 18px;
+}
+
+.section-title,
+.panel-title {
+  font-size: 21px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #211913;
+}
+
+.panel-header-row {
+  margin-bottom: 16px;
+}
+
+.panel-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panel-subtitle {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #856d58;
+}
+
+.weekdays {
+  margin-bottom: 12px;
+}
+
+.wd {
+  padding: 8px 6px;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: #9d7a5c;
+}
+
+.day {
+  min-height: 82px;
+  padding: 10px 8px;
+  border-radius: 18px;
+  border: 1px solid rgba(225, 212, 198, 0.88);
+  background: rgba(255, 251, 246, 0.82);
+  box-shadow: none;
+}
+
+.day:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 22px rgba(83, 63, 47, 0.08);
+  border-color: rgba(15, 118, 110, 0.24);
+}
+
+.day.today {
+  background: linear-gradient(145deg, rgba(15, 118, 110, 0.12), rgba(255, 250, 242, 0.94));
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.3);
+}
+
+.day.selected {
+  background: linear-gradient(145deg, rgba(15, 118, 110, 0.16), rgba(250, 247, 242, 0.98));
+  border-color: rgba(15, 118, 110, 0.3);
+}
+
+.day-header {
+  margin-bottom: 8px;
+}
+
+.num {
+  font-size: 15px;
+  color: #2b2119;
+}
+
+.event-indicators {
+  gap: 4px;
+}
+
+.event-indicator {
+  height: 7px;
+  border-radius: 999px;
+}
+
+.event-indicator-more {
+  font-size: 10px;
+  color: #806651;
+  background: rgba(243, 234, 224, 0.82);
+}
+
+.agenda-list {
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.agenda-item {
+  border-radius: 18px;
+  border-color: rgba(223, 210, 197, 0.76);
+  box-shadow: none;
+  background: rgba(255, 251, 246, 0.84);
+}
+
+.agenda-date {
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  background: rgba(255, 249, 242, 0.92);
+}
+
+.agenda-day {
+  font-size: 20px;
+}
+
+.agenda-weekday {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: #8a715b;
+}
+
+.agenda-title,
+.event-title,
+.detail-title {
+  color: #231912;
+}
+
+.agenda-time,
+.event-time,
+.event-meta,
+.empty-desc {
+  color: #7d6652;
+}
+
+.sidebar {
+  gap: 0;
+}
+
+.event-list {
+  gap: 12px;
+  max-height: calc(100vh - 210px);
+  padding-right: 2px;
+}
+
+.event-item {
+  gap: 12px;
+  padding: 14px 14px 14px 18px;
+  border-radius: 18px;
+  border-color: rgba(223, 210, 197, 0.76);
+  box-shadow: none;
+  background: rgba(255, 251, 246, 0.84);
+}
+
+.event-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(85, 64, 45, 0.07);
+}
+
+.event-item::before {
+  width: 4px;
+}
+
+.event-empty-state {
+  margin-top: 8px;
+  padding: 32px 18px;
+  border-radius: 18px;
+  background: rgba(255, 249, 242, 0.72);
+}
+
+.primary-sm {
+  border-radius: 12px;
+}
+
+.detail-card {
+  border-radius: 24px;
+  background: linear-gradient(180deg, #fffdf9 0%, #f7efe5 100%);
+  border: 1px solid rgba(216, 197, 177, 0.74);
+}
+
+.detail-header,
+.detail-actions {
+  background: rgba(255, 251, 246, 0.82);
+}
+
+.cancel {
+  border-radius: 10px;
+}
+
+.danger,
+.primary-sm,
+.primary {
+  box-shadow: 0 10px 22px rgba(15, 118, 110, 0.18);
+}
+
+@media (max-width: 1024px) {
+  .content {
+    padding: 18px 16px 24px;
+  }
+
+  .calendar-wrap {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
